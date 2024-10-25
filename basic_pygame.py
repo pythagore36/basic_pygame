@@ -8,7 +8,7 @@ pygame.init()
 screen_window = pygame.display.set_mode((600, 600),pygame.RESIZABLE)
 
 # nom de la fenêtre
-pygame.display.set_caption("Test")
+pygame.display.set_caption("Basic Pygame")
 
 # game_surface est une Surface sur laquelle on dessine un par un tous les objets du jeu. Quand on veut mettre à jour l'affichage de l'écran, on "colle" (blit) game_surface sur screen_window.
 game_surface=pygame.Surface([608, 608])
