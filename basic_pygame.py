@@ -4,6 +4,10 @@ import math
 # initialisation de pygame, obligatoire à faire avant d'utiliser n'importe quoi d'autre
 pygame.init()
 
+pygame.font.init()
+font_big = pygame.font.SysFont("arial",40)
+font_middle = pygame.font.SysFont("arial",30)
+
 # screen_window est une Surface correspondant directement à la fenêtre qui s'affiche sur l'écran
 screen_window = pygame.display.set_mode((600, 600),pygame.RESIZABLE)
 
@@ -12,6 +16,10 @@ pygame.display.set_caption("Basic Pygame")
 
 # game_surface est une Surface sur laquelle on dessine un par un tous les objets du jeu. Quand on veut mettre à jour l'affichage de l'écran, on "colle" (blit) game_surface sur screen_window.
 game_surface=pygame.Surface([608, 608])
+
+# game stages
+game_stage = "introduction"
+introduction_timer = 120
 
 #camera
 camera_x = 0
@@ -237,9 +245,23 @@ def update_camera():
     if camera_y + h - player_y < camera_margin:
         camera_y = player_y - h + camera_margin 
 
+# cette fonction met à jour l'état du jeu à chaque frame, selon le stage dans lequel on est
+def update_game():    
+    if game_stage == "introduction":
+        update_game_introduction()
+    elif game_stage == "level":
+        update_game_level()
 
-# cette fonction met à jour l'état du jeu à chaque frame.
-def update_game():
+# cette fonction met à jour l'état du jeu à chaque frame si on est dans le stage "introduction".
+def update_game_introduction():
+    global introduction_timer, game_stage
+    # on ne fait rien du tout dans ce stage, juste le compte à rebours du timer avant de passer au stage suivant.
+    introduction_timer -= 1
+    if introduction_timer < 0:
+        game_stage = "level"
+
+# cette fonction met à jour l'état du jeu à chaque frame si on est dans le stage "level".
+def update_game_level():
     global vx, vy, angle
     #fonction pygame qui nous permet de savoir quelles touches du clavier sont pressées en ce moment. keys[une certaine touche] sera True si cette touche est pressée, False sinon    
     keys = pygame.key.get_pressed()
@@ -275,9 +297,37 @@ def update_game():
     if has_projectile:
         update_projectile()
 
-# cette fonction redessine l'écran à chaque frame.
-# On dessine tout ce qu'il y a à dessiner sur la Surface game_surface. Quand game_surface est prête, on la colle sur la Surface screen_window pour l'afficher dans notre fenêtre de jeu.
+# cette fonction redessine l'écran à chaque frame selon le stage dans lequel on est
 def render_screen():
+    if game_stage=="introduction":
+        render_screen_introduction()
+    elif game_stage=="level":
+        render_screen_level()
+
+# cette fonction redessine l'écran à chaque frame si on est dans le stage "introduction"
+def render_screen_introduction():
+    game_surface.fill((0, 0, 0))    
+
+    text_surface = font_big.render("Welcome to this great game !", True, "white")
+    text_x = game_surface.get_width()/2 - text_surface.get_width()/2
+    text_y = 250
+    
+    game_surface.blit(text_surface, (text_x, text_y))
+
+    text_surface = font_middle.render("By : Pythagore36", True, "white")
+    text_x = game_surface.get_width()/2 - text_surface.get_width()/2
+    text_y = 350
+
+    game_surface.blit(text_surface, (text_x, text_y))
+
+    screen_size=screen_window.get_size()    
+    pygame.transform.scale(game_surface,screen_size, screen_window)       
+    pygame.display.update()
+
+
+# cette fonction redessine l'écran à chaque frame si on est dans le stage "level"
+# On dessine tout ce qu'il y a à dessiner sur la Surface game_surface. Quand game_surface est prête, on la colle sur la Surface screen_window pour l'afficher dans notre fenêtre de jeu.
+def render_screen_level():
     # on commence par reset le game_surface en la remplissant avec un fonc noir pour effacer tout ce qu'il y avait à la frame précédente. Dans une prochaine version, on pourrait
     # essayer de mettre une image de background à la place.
     game_surface.fill((0, 0, 0))
