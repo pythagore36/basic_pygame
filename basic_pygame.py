@@ -20,6 +20,7 @@ game_surface=pygame.Surface([608, 608])
 # game stages
 game_stage = "introduction"
 introduction_timer = 120
+congratulations_timer = 120
 
 #camera
 camera_x = 0
@@ -56,6 +57,16 @@ projectile_hitbox_y=-15
 projectile_hitbox_width=30
 projectile_hitbox_height=30
 
+# ------------ informations du flag -----------------------
+flag_x = 1100
+flag_y = 1100
+flag_hitbox_x=-20
+flag_hitbox_y=-20
+flag_hitbox_width=40
+flag_hitbox_height=40
+flag_state = "not reached"
+flag_reached_countdown_to_exit = 0
+
 # True s'il y a un projectile en ce moment, False sinon
 has_projectile = False
 
@@ -85,6 +96,12 @@ tile_width = 32
 
 # hauteur en pixels d'une case du tilemap. La hauteur en pixels du niveau est donc tile_map_height * tile_height
 tile_height = 32
+
+# longueur totale du niveau en pixels
+level_width = tile_map_width * tile_width
+
+# hauteur totale du niveau en pixels
+level_height = tile_map_height * tile_height
 
 # le tilemap lui même en un seul grand tableau. Les 1 sont des tiles solides, les 0 sont des tiles vides.
 # Pour accéder au tile situé ligne i - colonne j on fait tile_map[i * tile_map_width + j]
@@ -136,6 +153,8 @@ tile_map = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 # des transformations telles que la rotation ou le scaling. On peut "coller" (blit) ces objets Surface sur une autre Surface.
 image_player = pygame.image.load("ship.png").convert_alpha()
 image_fireball = pygame.image.load("fireball.png").convert_alpha()
+image_flag = pygame.transform.scale(pygame.image.load("green_flag.png").convert_alpha(),(40,40))
+image_background = pygame.transform.scale(pygame.image.load("background.jpg").convert_alpha(),(level_width, level_height))
 
 # on charge une image qu'on découpe ensuite en plusieurs petite images qui sont les différentes images de l'animation d'explosion. Les images sont mises dans le tableau image_explosions.
 explosion_sprite_sheet = pygame.image.load("explosion_sprites.png").convert_alpha()
@@ -155,7 +174,7 @@ for i in range(8):
 # On retourne True si la "zone solide" de l'objet est en contact avec une tile solide du tilemap, False sinon.
 # En clair, ça nous dit si on est à l'intérieur d'un mur.
 # Contenu de la fonction à étudier ensemble.
-def is_collision(x, y, hitbox_x, hitbox_y, hitbox_width, hitbox_height):
+def is_collision_with_tilemap(x, y, hitbox_x, hitbox_y, hitbox_width, hitbox_height):
     hitbox_x1 = x + hitbox_x
     hitbox_y1 = y + hitbox_y
     hitbox_x2 = hitbox_x1 + hitbox_width
@@ -172,6 +191,17 @@ def is_collision(x, y, hitbox_x, hitbox_y, hitbox_width, hitbox_height):
             if tile_position >= 0 and tile_position < len(tile_map) and tile_map[tile_position] != 0:
                 return True
     return False
+
+# collision entre deux objets pour lesquels on fournit les coordonnées et les informations de hitbox
+def is_collision(object1_x,object1_y,object1_hitbox_x, object1_hitbox_y, object1_hitbox_width, object1_hitbox_height,
+                 object2_x,object2_y,object2_hitbox_x, object2_hitbox_y, object2_hitbox_width, object2_hitbox_height):
+    x1 = object1_x + object1_hitbox_x
+    y1 = object1_y + object1_hitbox_y
+    x2 = object2_x + object2_hitbox_x
+    y2 = object2_y + object2_hitbox_y
+    if x2 > x1 + object1_hitbox_width or x1 > x2 + object2_hitbox_width or y2 > y1 + object1_hitbox_height or y1 > y2 + object2_hitbox_height:
+        return False
+    return True
 
 
 # fonction qui supprime le projectile à la fin de l'animation d'explosion. Il suffit de mettre le boolean has_projectile à False
@@ -202,7 +232,7 @@ def update_projectile():
         projectile_y += projectile_vy
         moving_timer -= 1
         # si le projectile est arrivé à la fin de sa durée de vie ou qu'il a touché un obstacle solide, il passe en mode "exploding"
-        if moving_timer <= 0 or is_collision(projectile_x, projectile_y, projectile_hitbox_x, projectile_hitbox_y, projectile_hitbox_width, projectile_hitbox_height):
+        if moving_timer <= 0 or is_collision_with_tilemap(projectile_x, projectile_y, projectile_hitbox_x, projectile_hitbox_y, projectile_hitbox_width, projectile_hitbox_height):
             projectile_state = 'exploding'
             explosion_timer = 0            
     # si le projectile est en mode "exploding", on augmente le timer de l'explosion  pour qu'on sache à quelle image on en est.
@@ -227,11 +257,22 @@ def image_projectile():
 def move_player():
     global player_x, player_y
     player_x += vx
-    if is_collision(player_x, player_y, player_hitbox_x, player_hitbox_y, player_hitbox_width, player_hitbox_height):
+    if is_collision_with_tilemap(player_x, player_y, player_hitbox_x, player_hitbox_y, player_hitbox_width, player_hitbox_height):
         player_x-=vx
     player_y += vy
-    if is_collision(player_x, player_y, player_hitbox_x, player_hitbox_y, player_hitbox_width, player_hitbox_height):
+    if is_collision_with_tilemap(player_x, player_y, player_hitbox_x, player_hitbox_y, player_hitbox_width, player_hitbox_height):
         player_y-=vy
+
+def update_flag():
+    global flag_state, running, flag_reached_countdown_to_exit, game_stage
+    if flag_state == "not reached":
+        if is_collision(player_x, player_y, player_hitbox_x, player_hitbox_y, player_hitbox_width, player_hitbox_height, flag_x, flag_y, flag_hitbox_x, flag_hitbox_y, flag_hitbox_width, flag_hitbox_height):
+            flag_state = "reached"
+            flag_reached_countdown_to_exit = 60
+    elif flag_state == "reached":
+        flag_reached_countdown_to_exit -= 1
+        if flag_reached_countdown_to_exit < 0:
+            game_stage = "congratulations"
 
 def update_camera():    
     global camera_x, camera_y
@@ -243,7 +284,12 @@ def update_camera():
     if player_y - camera_y < camera_margin:
         camera_y = player_y - camera_margin
     if camera_y + h - player_y < camera_margin:
-        camera_y = player_y - h + camera_margin 
+        camera_y = player_y - h + camera_margin
+    # la caméra ne doit jamais montrer en dehors des limites du niveau
+    camera_x = max(0, camera_x)
+    camera_y = max(0, camera_y)
+    camera_x = min(camera_x, level_width - game_surface.get_width())
+    camera_y = min(camera_y, level_height - game_surface.get_height())
 
 # cette fonction met à jour l'état du jeu à chaque frame, selon le stage dans lequel on est
 def update_game():    
@@ -251,6 +297,8 @@ def update_game():
         update_game_introduction()
     elif game_stage == "level":
         update_game_level()
+    elif game_stage == "congratulations":
+        update_game_congratulations()
 
 # cette fonction met à jour l'état du jeu à chaque frame si on est dans le stage "introduction".
 def update_game_introduction():
@@ -259,6 +307,14 @@ def update_game_introduction():
     introduction_timer -= 1
     if introduction_timer < 0:
         game_stage = "level"
+
+# cette fonction met à jour l'état du jeu à chaque frame si on est dans le stage "congratulations".
+def update_game_congratulations():
+    global congratulations_timer, running
+    # on ne fait rien du tout dans ce stage, juste le compte à rebours du timer avant de quitter le jeu.
+    congratulations_timer -= 1
+    if congratulations_timer < 0:
+        running = False
 
 # cette fonction met à jour l'état du jeu à chaque frame si on est dans le stage "level".
 def update_game_level():
@@ -296,6 +352,9 @@ def update_game_level():
     # s'il y a un projectile, on le met à jour.
     if has_projectile:
         update_projectile()
+    
+    # vérifier si on a atteint le flag
+    update_flag()
 
 # cette fonction redessine l'écran à chaque frame selon le stage dans lequel on est
 def render_screen():
@@ -303,6 +362,26 @@ def render_screen():
         render_screen_introduction()
     elif game_stage=="level":
         render_screen_level()
+    elif game_stage=="congratulations":
+        render_screen_congratulations()
+
+def render_screen_congratulations():
+    game_surface.fill((0, 0, 0))
+    text_surface = font_big.render("Congratulations ! You win !", True, "white")
+    text_x = game_surface.get_width()/2 - text_surface.get_width()/2
+    text_y = 250
+    
+    game_surface.blit(text_surface, (text_x, text_y))
+
+    text_surface = font_middle.render("Thank you for playing", True, "white")
+    text_x = game_surface.get_width()/2 - text_surface.get_width()/2
+    text_y = 350
+
+    game_surface.blit(text_surface, (text_x, text_y))
+
+    screen_size=screen_window.get_size()    
+    pygame.transform.scale(game_surface,screen_size, screen_window)       
+    pygame.display.update()
 
 # cette fonction redessine l'écran à chaque frame si on est dans le stage "introduction"
 def render_screen_introduction():
@@ -332,6 +411,8 @@ def render_screen_level():
     # essayer de mettre une image de background à la place.
     game_surface.fill((0, 0, 0))
 
+    game_surface.blit(image_background,(-camera_x, - camera_y))
+
     # on dessine le tilemap ligne par ligne. Pour chaque ligne, on prend les colonnes une à une, on regarde la tile présente à cet endroit. Si on trouve 1, on calcule les coordonnées
     # x et y de la tile sur l'écran et on "blit" l'image de la tile à ces coordonnées sur la game_surface
     for row in range(tile_map_height):
@@ -351,13 +432,21 @@ def render_screen_level():
     y_draw = player_y - image_angle.get_height()/2 - camera_y
     game_surface.blit(image_angle,(x_draw,y_draw))
 
-    # enfin on dessine le projectile s'il y en a un. On utilise la fonction définie avant pour utiliser la bonne image.
+    # ensuite on dessine le projectile s'il y en a un. On utilise la fonction définie avant pour utiliser la bonne image.
     # Comme pour le joueur, les coordonnées x et y du projectile corresponent au centre de l'image affichée.
     if has_projectile:
         image = image_projectile()
         x_draw = projectile_x - image.get_width()/2 - camera_x
         y_draw = projectile_y - image.get_height()/2 - camera_y
         game_surface.blit(image,(x_draw,y_draw))
+
+    # on dessine le flag si on ne l'a pas encore atteint
+    if flag_state=="not reached":
+        image = image_flag
+        x_draw = flag_x - image.get_width()/2 - camera_x
+        y_draw = flag_y - image.get_height()/2 - camera_y
+        game_surface.blit(image,(x_draw,y_draw))
+
 
     # maintenant la game_surface est prête, il nous reste à la copier dans screen_window qui est la Surface qu'on affiche à l'écran.
     # Depuis le début du programme, la taille de game_surface reste toujours la même. Par contre le screen_window peut changer de taille 
