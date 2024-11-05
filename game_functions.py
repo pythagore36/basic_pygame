@@ -32,24 +32,10 @@ def init_game_data():
     "hitbox": {"x":-15,
                "y":-15,
                "width":30,
-               "height":30}
-},
-"projectile_object" : {
-    "x" : 0,
-    "y" : 0,
-    "vx": 0,
-    "vy": 0,
-    "angle": 0,
-    "hitbox": {"x":-15,
-               "y":-15,
-               "width":30,
                "height":30},
-    "has_projectile": False,
-    "state": "moving",
-    "moving_timer": 120,
-    "explosion_timer": 0,
-    "explosion_animation_delay": 3
+    "next_projectile_delay":0
 },
+"projectiles" : [],
 "flag_object" : {
     "x" : 1150,
     "y" : 1150,

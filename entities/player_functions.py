@@ -1,11 +1,33 @@
 import pygame
 import collision_functions
-import entities.projectile_functions as projectile_functions
 import renderer
 import math
 
-def update(player_object, game_data):
-    projectile_object = game_data["projectile_object"]
+def add_projectile(player_object, game_data):
+          
+    projectile_object = {}
+
+    direction_x = math.cos(math.radians(player_object["angle"]))
+    direction_y = -math.sin(math.radians(player_object["angle"]))
+    projectile_object["x"] = player_object["x"] + direction_x * 10
+    projectile_object["y"] = player_object["y"] + direction_y * 10
+    projectile_object["state"] = 'moving'
+    projectile_object["angle"] = player_object["angle"]
+    projectile_object["moving_timer"] = 300
+    projectile_object["vx"] = direction_x * 10
+    projectile_object["vy"] = direction_y * 10
+    projectile_object["hitbox"] = {"x":-15, "y":-15, "width":30, "height":30}
+    projectile_object["explosion_animation_delay"] = 3
+
+    game_data["messages"].append({
+        "type":"add_projectile",
+        "object":projectile_object
+    })
+
+    player_object["next_projectile_delay"] = 10
+
+
+def update(player_object, game_data):    
     #fonction pygame qui nous permet de savoir quelles touches du clavier sont pressées en ce moment. keys[une certaine touche] sera True si cette touche est pressée, False sinon    
     keys = pygame.key.get_pressed()
     
@@ -15,9 +37,9 @@ def update(player_object, game_data):
     if keys[pygame.K_RIGHT]: 
         player_object["angle"]-=5
 
-    # on crée un projectile si la touche espace est pressée et qu'il n'y a actuellement pas de projectile
-    if keys[pygame.K_SPACE] and not projectile_object["has_projectile"] :
-        projectile_functions.add_projectile(projectile_object, game_data)
+    # on crée un projectile si la touche espace est pressée
+    if keys[pygame.K_SPACE] and player_object["next_projectile_delay"] <= 0 :
+        add_projectile(player_object, game_data)
 
     # la vitesse de déplacement du joueur en x et y est décidée selon les appuis sur les touches haut et bas et selon l'angle courant du joueur. Détail à étudier ensemble.
     if keys[pygame.K_UP]:
@@ -32,6 +54,9 @@ def update(player_object, game_data):
     
     # on appelle la fonction de déplacement du joueur après avoir calculé sa vitesse
     move_player(player_object, game_data)
+
+    if player_object["next_projectile_delay"] > 0:
+        player_object["next_projectile_delay"]-=1
 
 # Cette fonction déplace le joueur à chaque frame. Deux mouvements sont effectués : un mouvement selon x et l'autre selon y.
 # Dans chaque cas, si une collision est détectée après le mouvement, le mouvement est annulé et on reste dans la position actuelle.

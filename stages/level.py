@@ -32,20 +32,32 @@ def update_camera(game_data):
     game_data["camera"]["x"] = camera_x
     game_data["camera"]["y"] = camera_y
 
+def apply_message(message, game_data):
+    if message["type"] == "add_projectile":
+        game_data["projectiles"].append(message["object"])
+    elif message["type"] == "remove_projectile":
+        game_data["projectiles"].remove(message["object"])
+
 def update(game_data):
+
+    game_data["messages"] = []
+
     player_object = game_data["player_object"]
     player_functions.update(player_object, game_data)
 
     # mettre à jour la caméra pour garder la joueur dans le champ visible
     update_camera(game_data)
-
-    # s'il y a un projectile, on le met à jour.
-    projectile_object = game_data["projectile_object"]
-    projectile_functions.update(projectile_object, game_data) 
+    
+    projectiles = game_data["projectiles"]
+    for projectile in projectiles:
+        projectile_functions.update(projectile, game_data) 
     
     # vérifier si on a atteint le flag
     flag_object = game_data["flag_object"]
     flag_functions.update(flag_object, game_data)
+
+    for message in game_data["messages"]:
+        apply_message(message, game_data)
 
 def render(game_data):
                      
@@ -57,8 +69,9 @@ def render(game_data):
     player_object = game_data["player_object"]
     player_functions.render(player_object, game_data)
 
-    projectile_object = game_data["projectile_object"]
-    projectile_functions.render(projectile_object, game_data)
+    projectiles = game_data["projectiles"]
+    for projectile in projectiles:
+        projectile_functions.render(projectile, game_data)
 
     flag_object = game_data["flag_object"]
     flag_functions.render(flag_object, game_data)   
