@@ -7,6 +7,7 @@ import entities.tilemap_functions as tilemap_functions
 import stages.introduction as introduction
 import stages.level as level
 import stages.congratulations as congratulations
+import stages.game_over as game_over
 
 
 def init_game_data():
@@ -29,16 +30,57 @@ def init_game_data():
     "vx": 0,
     "vy": 0,
     "angle": 0,
+    "health": 3,
+    "state": "alive",
     "hitbox": {"x":-15,
                "y":-15,
                "width":30,
                "height":30},
-    "next_projectile_delay":0
+    "next_projectile_delay":0,
+    "explosion_animation_delay":3
 },
 "projectiles" : [],
+"mines" : [
+    {"x":1150,
+     "y":1170,
+     "hitbox": {"x":-20,
+               "y":-20,
+               "width":30,
+               "height":30},
+      "state":"standing",
+      "explosion_animation_delay":3
+     },
+     {"x":1150,
+     "y":1030,
+     "hitbox": {"x":-20,
+               "y":-20,
+               "width":30,
+               "height":30},
+      "state":"standing",
+      "explosion_animation_delay":3
+     },
+     {"x":1080,
+     "y":1100,
+     "hitbox": {"x":-20,
+               "y":-20,
+               "width":30,
+               "height":30},
+      "state":"standing",
+      "explosion_animation_delay":3
+     },
+     {"x":1220,
+     "y":1100,
+     "hitbox": {"x":-20,
+               "y":-20,
+               "width":30,
+               "height":30},
+      "state":"standing",
+      "explosion_animation_delay":3
+     }
+],
 "flag_object" : {
     "x" : 1150,
-    "y" : 1150,
+    "y" : 1100,
     "hitbox": {"x":-20,
                "y":-20,
                "width":40,
@@ -114,6 +156,8 @@ def update(game_data):
         level.update(game_data)
     elif game_stage == "congratulations":
         congratulations.update(game_data)
+    elif game_stage == "game_over":
+        game_over.update(game_data)
                 
 
 def render(game_data):
@@ -127,5 +171,7 @@ def render(game_data):
         level.render(game_data)
     elif game_stage=="congratulations":
         congratulations.render(game_data)
+    elif game_stage == "game_over":
+        game_over.render(game_data)
     
     renderer.refresh_screen()

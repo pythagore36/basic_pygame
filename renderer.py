@@ -37,6 +37,8 @@ def write_text(text, y, font):
     game_surface.blit(text_surface, (text_x, y))
 
 def draw_image(image_key, x, y, image_index=-1, centered = False, angle = 0):
+    if image_key == "null":
+        return
     game_surface = renderer_object["game_surface"]
     image = image_manager.getImage(image_key, image_index)
     rotated_image = pygame.transform.rotate(image,angle)

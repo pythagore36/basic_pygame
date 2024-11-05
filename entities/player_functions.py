@@ -27,7 +27,30 @@ def add_projectile(player_object, game_data):
     player_object["next_projectile_delay"] = 10
 
 
+def damage_player(player_object, health_points):
+    
+    player_object["health"]-=health_points
+    if player_object["health"] <= 0:
+        player_object["state"] = "exploding"
+        player_object["explosion_timer"] = 0
+    else:
+        player_object["state"] = "hurt"
+        player_object["hurt_timer"] = 60
+        
+
 def update(player_object, game_data):    
+    
+    if player_object["state"] == "exploding":
+        player_object["explosion_timer"] += 1
+        if player_object["explosion_timer"] > player_object["explosion_animation_delay"] * renderer.get_animation_length("explosion"):
+            game_data["stage"] = {"name": "game_over", "timer" : 120}
+        return
+    
+    if player_object["state"] == "hurt":
+        player_object["hurt_timer"]-=1
+        if player_object["hurt_timer"] <= 0:
+            player_object["state"] = "alive"
+
     #fonction pygame qui nous permet de savoir quelles touches du clavier sont pressées en ce moment. keys[une certaine touche] sera True si cette touche est pressée, False sinon    
     keys = pygame.key.get_pressed()
     
@@ -70,9 +93,23 @@ def move_player(player_object, game_data):
     if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
         player_object["y"]-=player_object["vy"]
 
+def image_player(player_object):        
+    if player_object["state"] == 'alive':
+        return ("player", -1)
+    elif player_object["state"] == 'exploding':
+        i = int(player_object["explosion_timer"] / player_object["explosion_animation_delay"] ) % renderer.get_animation_length("explosion")
+        return ("explosion", i)
+    elif player_object["state"] == 'hurt':
+        i = int(player_object["hurt_timer"] / 3)
+        if i%2 == 0:
+            return ("player", -1)
+        else:
+            return ("null", -1)
+
 def render(player_object, game_data):
     camera_x = game_data["camera"]["x"]
     camera_y = game_data["camera"]["y"]
     x_draw = player_object["x"] - camera_x
     y_draw = player_object["y"] - camera_y
-    renderer.draw_image("player", x_draw, y_draw, centered=True, angle=player_object["angle"])
+    (image_key, image_index) = image_player(player_object)
+    renderer.draw_image(image_key, x_draw, y_draw, image_index, centered=True, angle=player_object["angle"])

@@ -1,8 +1,10 @@
 import entities.player_functions as player_functions
 import entities.projectile_functions as projectile_functions
+import entities.mine_functions as mine_functions
 import entities.flag_functions as flag_functions
 import entities.background_functions as background_functions
 import entities.tilemap_functions as tilemap_functions
+import head_up_display
 
 
 def update_camera(game_data):    
@@ -37,6 +39,11 @@ def apply_message(message, game_data):
         game_data["projectiles"].append(message["object"])
     elif message["type"] == "remove_projectile":
         game_data["projectiles"].remove(message["object"])
+    elif message["type"] == "remove_mine":
+        game_data["mines"].remove(message["object"])
+    elif message["type"] == "damage_player":
+        player_object = game_data["player_object"]
+        player_functions.damage_player(player_object, message["object"])
 
 def update(game_data):
 
@@ -52,6 +59,10 @@ def update(game_data):
     for projectile in projectiles:
         projectile_functions.update(projectile, game_data) 
     
+    mines = game_data["mines"]
+    for mine in mines:
+        mine_functions.update(mine, game_data)
+
     # vérifier si on a atteint le flag
     flag_object = game_data["flag_object"]
     flag_functions.update(flag_object, game_data)
@@ -72,6 +83,12 @@ def render(game_data):
     projectiles = game_data["projectiles"]
     for projectile in projectiles:
         projectile_functions.render(projectile, game_data)
+    
+    mines = game_data["mines"]
+    for mine in mines:
+        mine_functions.render(mine, game_data)
 
     flag_object = game_data["flag_object"]
-    flag_functions.render(flag_object, game_data)   
+    flag_functions.render(flag_object, game_data)
+
+    head_up_display.render(game_data)  

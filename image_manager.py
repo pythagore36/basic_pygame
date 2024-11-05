@@ -7,6 +7,7 @@ def init(game_data):
     images["player"] = pygame.image.load("images/ship.png").convert_alpha()
     images["fireball"] = pygame.image.load("images/fireball.png").convert_alpha()
     images["flag"] = pygame.transform.scale(pygame.image.load("images/green_flag.png").convert_alpha(),(40,40))
+    images["mine"] = pygame.transform.scale(pygame.image.load("images/mine.png").convert_alpha(),(40,40))
     images["background"] = pygame.transform.scale(pygame.image.load("images/background.jpg").convert_alpha(),(game_data["level_width"], game_data["level_height"]))
 
     explosion_sprite_sheet = pygame.image.load("images/explosion_sprites.png").convert_alpha()
@@ -22,6 +23,8 @@ def init(game_data):
     for i in range(8):
         image_tiles.append(pygame.transform.scale(tiles_sheet.subsurface(i*64,65,64,64).convert_alpha(), (32,32)))
     images["tiles"] = image_tiles
+
+    images["heart"] = pygame.transform.scale(pygame.image.load("images/heart.png").convert_alpha(),(40,40))
 
 def getImage(key, index = -1):
     if index == -1:
