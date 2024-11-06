@@ -1,9 +1,4 @@
-import entities.background_functions as background_functions
-import entities.flag_functions as flag_functions
-import entities.player_functions as player_functions
-import entities.projectile_functions as projectile_functions
 import renderer
-import entities.tilemap_functions as tilemap_functions
 import stages.introduction as introduction
 import stages.level as level
 import stages.congratulations as congratulations
@@ -24,7 +19,8 @@ def init_game_data():
         "y":0,
         "margin":250
     },
-    "player_object" : {
+    "entities" : [{
+    "type" : "player",
     "x" : 300,
     "y" : 300,
     "vx": 0,
@@ -38,10 +34,9 @@ def init_game_data():
                "height":30},
     "next_projectile_delay":0,
     "explosion_animation_delay":3
-},
-"projectiles" : [],
-"mines" : [
-    {"x":1150,
+    },
+    {"type" : "mine",
+     "x":1150,
      "y":1170,
      "hitbox": {"x":-20,
                "y":-20,
@@ -57,7 +52,8 @@ def init_game_data():
           "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
       }
      },
-     {"x":1150,
+     {"type" : "mine",
+     "x":1150,
      "y":1030,
      "hitbox": {"x":-20,
                "y":-20,
@@ -73,7 +69,8 @@ def init_game_data():
           "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
       }
      },
-     {"x":1080,
+     {"type" : "mine",
+     "x":1080,
      "y":1100,
      "hitbox": {"x":-20,
                "y":-20,
@@ -89,7 +86,8 @@ def init_game_data():
           "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
       }
      },
-     {"x":1220,
+     {"type" : "mine",
+     "x":1220,
      "y":1100,
      "hitbox": {"x":-20,
                "y":-20,
@@ -104,9 +102,9 @@ def init_game_data():
           "target":3,
           "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
       }
-     }
-],
-"flag_object" : {
+     },
+     {
+    "type" : "flag",
     "x" : 1150,
     "y" : 1100,
     "hitbox": {"x":-20,
@@ -115,7 +113,7 @@ def init_game_data():
                "height":40},
     "state": "not reached",
     "reached_countdown_to_exit": 0
-},
+}],
 "tilemap_object" : {
     "tile_map_width" : 40,
     "tile_map_height" : 40,

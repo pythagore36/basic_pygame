@@ -9,6 +9,7 @@ def add_projectile(player_object, game_data):
 
     direction_x = math.cos(math.radians(player_object["angle"]))
     direction_y = -math.sin(math.radians(player_object["angle"]))
+    projectile_object["type"] = "projectile"
     projectile_object["x"] = player_object["x"] + direction_x * 10
     projectile_object["y"] = player_object["y"] + direction_y * 10
     projectile_object["state"] = 'moving'
@@ -20,7 +21,7 @@ def add_projectile(player_object, game_data):
     projectile_object["explosion_animation_delay"] = 3
 
     game_data["messages"].append({
-        "type":"add_projectile",
+        "type":"add_entity",
         "object":projectile_object
     })
 
@@ -83,8 +84,7 @@ def update(player_object, game_data):
 
 # Cette fonction déplace le joueur à chaque frame. Deux mouvements sont effectués : un mouvement selon x et l'autre selon y.
 # Dans chaque cas, si une collision est détectée après le mouvement, le mouvement est annulé et on reste dans la position actuelle.
-def move_player(player_object, game_data):
-    player_object = game_data["player_object"]
+def move_player(player_object, game_data):    
     tilemap_object = game_data["tilemap_object"]
     player_object["x"] += player_object["vx"]
     if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):

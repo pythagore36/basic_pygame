@@ -1,7 +1,7 @@
 import renderer
 
 def render(game_data):
-    health = game_data["player_object"]["health"]
+    health = game_data["entities"][0]["health"]
     if health > 0:
         y = 560
         x = 20

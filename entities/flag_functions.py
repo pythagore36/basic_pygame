@@ -2,7 +2,7 @@ import collision_functions
 import renderer
 
 def update(flag_object, game_data):    
-    player_object = game_data["player_object"]
+    player_object = game_data["entities"][0]
     if flag_object["state"] == "not reached":
         if collision_functions.is_collision(player_object["x"], player_object["y"], player_object["hitbox"], flag_object["x"], flag_object["y"], flag_object["hitbox"]):
             flag_object["state"] = "reached"

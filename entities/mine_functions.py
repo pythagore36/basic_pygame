@@ -4,7 +4,7 @@ import patrolling
 
 def remove_mine(mine_object, game_data):    
     game_data["messages"].append({
-        "type":"remove_mine",
+        "type":"remove_entity",
         "object":mine_object
     })
 
@@ -14,13 +14,15 @@ def damage_player(game_data, health_points):
         "object":health_points
     })
 
-def update(mine_object, game_data):
-    player_object = game_data["player_object"]
+def update(mine_object, game_data):    
     if mine_object["state"] == "patrolling":             
-        if collision_functions.is_collision(mine_object["x"], mine_object["y"], mine_object["hitbox"],player_object["x"], player_object["y"], player_object["hitbox"]):
-            mine_object["state"] = "exploding"
-            mine_object["explosion_timer"] = 0
-            damage_player(game_data,1)
+        collisions = collision_functions.collisions(mine_object, game_data)
+        
+        for collision in collisions:
+            if collision["type"] == "player":
+                mine_object["state"] = "exploding"
+                mine_object["explosion_timer"] = 0
+                damage_player(game_data,1)
 
         mine_object["vx"] = 0
         mine_object["vy"] = 0

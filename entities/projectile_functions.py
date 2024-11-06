@@ -3,7 +3,7 @@ import renderer
 
 def remove_projectile(projectile_object, game_data):    
     game_data["messages"].append({
-        "type":"remove_projectile",
+        "type":"remove_entity",
         "object":projectile_object
     })
 
@@ -13,10 +13,19 @@ def update(projectile_object, game_data):
     # si le projectile est à l'état "moving" il continue d'avance selon sa vitesse en x et en y.
     if projectile_object["state"] == 'moving':
         projectile_object["x"] += projectile_object["vx"]
-        projectile_object["y"] += projectile_object["vy"]
-        projectile_object["moving_timer"] -= 1
-        # si le projectile est arrivé à la fin de sa durée de vie ou qu'il a touché un obstacle solide, il passe en mode "exploding"
-        if projectile_object["moving_timer"] <= 0 or collision_functions.is_collision_with_tilemap(projectile_object["x"], projectile_object["y"], projectile_object["hitbox"], tilemap_object):
+        projectile_object["y"] += projectile_object["vy"]        
+        
+        is_collision = False
+
+        collisions = collision_functions.collisions(projectile_object, game_data)
+        for collision in collisions:
+            if collision["type"] in ["mine", "flag"]:
+                is_collision = True
+
+        if collision_functions.is_collision_with_tilemap(projectile_object["x"], projectile_object["y"], projectile_object["hitbox"], tilemap_object):
+            is_collision = True
+        
+        if is_collision:
             projectile_object["state"] = 'exploding'
             projectile_object["explosion_timer"] = 0            
     # si le projectile est en mode "exploding", on augmente le timer de l'explosion  pour qu'on sache à quelle image on en est.

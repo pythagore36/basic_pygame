@@ -30,3 +30,16 @@ def is_collision(object1_x,object1_y,object1_hitbox,
     if x2 > x1 + object1_hitbox["width"] or x1 > x2 + object2_hitbox["width"] or y2 > y1 + object1_hitbox["height"] or y1 > y2 + object2_hitbox["height"]:
         return False
     return True
+
+# retourne toutes les entity en collision avec l'entity donnée en argument
+def collisions(entity, game_data):
+    if "hitbox" not in entity:
+        return []
+    entities = game_data["entities"]
+    result = []
+    for entity_test in entities:
+        if entity_test == entity or "hitbox" not in entity_test:
+            continue
+        if is_collision(entity["x"], entity["y"], entity["hitbox"],entity_test["x"], entity_test["y"], entity_test["hitbox"]):
+            result.append(entity_test)
+    return result
