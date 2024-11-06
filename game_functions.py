@@ -22,7 +22,7 @@ def init_game_data():
     "camera":{
         "x":0,
         "y":0,
-        "margin":200
+        "margin":250
     },
     "player_object" : {
     "x" : 300,
@@ -47,8 +47,15 @@ def init_game_data():
                "y":-20,
                "width":30,
                "height":30},
-      "state":"standing",
-      "explosion_animation_delay":3
+      "state":"patrolling",
+      "explosion_animation_delay":3,
+      "vx":0,
+      "vy":0,
+      "patrolling_data": {
+          "velocity":2,
+          "target":0,
+          "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
+      }
      },
      {"x":1150,
      "y":1030,
@@ -56,8 +63,15 @@ def init_game_data():
                "y":-20,
                "width":30,
                "height":30},
-      "state":"standing",
-      "explosion_animation_delay":3
+      "state":"patrolling",
+      "explosion_animation_delay":3,
+      "vx":0,
+      "vy":0,
+      "patrolling_data": {
+          "velocity":2,
+          "target":2,
+          "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
+      }
      },
      {"x":1080,
      "y":1100,
@@ -65,8 +79,15 @@ def init_game_data():
                "y":-20,
                "width":30,
                "height":30},
-      "state":"standing",
-      "explosion_animation_delay":3
+      "state":"patrolling",
+      "explosion_animation_delay":3,
+      "vx":0,
+      "vy":0,
+      "patrolling_data": {
+          "velocity":2,
+          "target":1,
+          "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
+      }
      },
      {"x":1220,
      "y":1100,
@@ -74,8 +95,15 @@ def init_game_data():
                "y":-20,
                "width":30,
                "height":30},
-      "state":"standing",
-      "explosion_animation_delay":3
+      "state":"patrolling",
+      "explosion_animation_delay":3,
+      "vx":0,
+      "vy":0,
+      "patrolling_data": {
+          "velocity":2,
+          "target":3,
+          "points":[(1080,1170), (1080,1030), (1220,1030), (1220,1170)]
+      }
      }
 ],
 "flag_object" : {
