@@ -5,13 +5,13 @@ import entities.tilemap_functions as tilemap_functions
 import head_up_display
 
 
-def update_camera(game_data):    
-    camera_x = game_data["camera"]["x"]
-    camera_y = game_data["camera"]["y"]
-    camera_margin = game_data["camera"]["margin"]
-    level_width = game_data["level_width"]
-    level_height = game_data["level_height"]
-    player_object = game_data["entities"][0]
+def update_camera(level_data, game_data):    
+    camera_x = level_data["camera"]["x"]
+    camera_y = level_data["camera"]["y"]
+    camera_margin = level_data["camera"]["margin"]
+    level_width = level_data["level_width"]
+    level_height = level_data["level_height"]
+    player_object = level_data["entities"][0]
 
     w = game_data["screen_width"]
     h = game_data["screen_height"]
@@ -29,41 +29,43 @@ def update_camera(game_data):
     camera_x = min(camera_x, level_width - w)
     camera_y = min(camera_y, level_height - h)
 
-    game_data["camera"]["x"] = camera_x
-    game_data["camera"]["y"] = camera_y
+    level_data["camera"]["x"] = camera_x
+    level_data["camera"]["y"] = camera_y
 
-def apply_message(message, game_data):
+def apply_message(message, level_data, game_data):
     if message["type"] == "add_entity":
-        game_data["entities"].append(message["object"])
+        level_data["entities"].append(message["object"])
     elif message["type"] == "remove_entity":
-        game_data["entities"].remove(message["object"])
+        level_data["entities"].remove(message["object"])
     elif message["type"] == "damage_player":
-        player_object = game_data["entities"][0]
+        player_object = level_data["entities"][0]
         player_functions.damage_player(player_object, message["object"])
+    else: 
+        game_data["messages"].append(message)
 
-def update(game_data):
+def update(level_data, game_data):
 
-    game_data["messages"] = []
+    level_data["messages"] = []
 
-    entities = game_data["entities"]
+    entities = level_data["entities"]
     for entity in entities:
-        entity_functions.update(entity, game_data)
+        entity_functions.update(entity, level_data)
 
     # mettre à jour la caméra pour garder la joueur dans le champ visible
-    update_camera(game_data)
+    update_camera(level_data, game_data)
 
-    for message in game_data["messages"]:
-        apply_message(message, game_data)
+    for message in level_data["messages"]:
+        apply_message(message, level_data, game_data)
 
-def render(game_data):
+def render(level_data, game_data):
                      
-    background_functions.render(game_data)
+    background_functions.render(level_data)
 
-    tilemap_object = game_data["tilemap_object"]
-    tilemap_functions.render(tilemap_object, game_data)                     
+    tilemap_object = level_data["tilemap_object"]
+    tilemap_functions.render(tilemap_object, level_data)                     
 
-    entities = game_data["entities"]
+    entities = level_data["entities"]
     for entity in entities:
-        entity_functions.render(entity, game_data)
+        entity_functions.render(entity, level_data)
 
-    head_up_display.render(game_data)  
+    head_up_display.render(level_data)  

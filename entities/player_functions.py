@@ -3,7 +3,7 @@ import collision_functions
 import renderer
 import math
 
-def add_projectile(player_object, game_data):
+def add_projectile(player_object, level_data):
           
     projectile_object = {}
 
@@ -20,7 +20,7 @@ def add_projectile(player_object, game_data):
     projectile_object["hitbox"] = {"x":-15, "y":-15, "width":30, "height":30}
     projectile_object["explosion_animation_delay"] = 3
 
-    game_data["messages"].append({
+    level_data["messages"].append({
         "type":"add_entity",
         "object":projectile_object
     })
@@ -39,12 +39,12 @@ def damage_player(player_object, health_points):
         player_object["hurt_timer"] = 60
         
 
-def update(player_object, game_data):    
+def update(player_object, level_data):    
     
     if player_object["state"] == "exploding":
         player_object["explosion_timer"] += 1
         if player_object["explosion_timer"] > player_object["explosion_animation_delay"] * renderer.get_animation_length("explosion"):
-            game_data["stage"] = {"name": "game_over", "timer" : 120}
+            level_data["messages"].append({"type":"set_stage", "object":"game_over"})
         return
     
     if player_object["state"] == "hurt":
@@ -63,7 +63,7 @@ def update(player_object, game_data):
 
     # on crée un projectile si la touche espace est pressée
     if keys[pygame.K_SPACE] and player_object["next_projectile_delay"] <= 0 :
-        add_projectile(player_object, game_data)
+        add_projectile(player_object, level_data)
 
     # la vitesse de déplacement du joueur en x et y est décidée selon les appuis sur les touches haut et bas et selon l'angle courant du joueur. Détail à étudier ensemble.
     if keys[pygame.K_UP]:
@@ -77,15 +77,15 @@ def update(player_object, game_data):
         player_object["vy"] = 0
     
     # on appelle la fonction de déplacement du joueur après avoir calculé sa vitesse
-    move_player(player_object, game_data)
+    move_player(player_object, level_data)
 
     if player_object["next_projectile_delay"] > 0:
         player_object["next_projectile_delay"]-=1
 
 # Cette fonction déplace le joueur à chaque frame. Deux mouvements sont effectués : un mouvement selon x et l'autre selon y.
 # Dans chaque cas, si une collision est détectée après le mouvement, le mouvement est annulé et on reste dans la position actuelle.
-def move_player(player_object, game_data):    
-    tilemap_object = game_data["tilemap_object"]
+def move_player(player_object, level_data):    
+    tilemap_object = level_data["tilemap_object"]
     player_object["x"] += player_object["vx"]
     if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
         player_object["x"]-=player_object["vx"]
@@ -106,9 +106,9 @@ def image_player(player_object):
         else:
             return ("null", -1)
 
-def render(player_object, game_data):
-    camera_x = game_data["camera"]["x"]
-    camera_y = game_data["camera"]["y"]
+def render(player_object, level_data):
+    camera_x = level_data["camera"]["x"]
+    camera_y = level_data["camera"]["y"]
     x_draw = player_object["x"] - camera_x
     y_draw = player_object["y"] - camera_y
     (image_key, image_index) = image_player(player_object)

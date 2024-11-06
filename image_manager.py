@@ -8,7 +8,7 @@ def init(game_data):
     images["fireball"] = pygame.image.load("images/fireball.png").convert_alpha()
     images["flag"] = pygame.transform.scale(pygame.image.load("images/green_flag.png").convert_alpha(),(40,40))
     images["mine"] = pygame.transform.scale(pygame.image.load("images/mine.png").convert_alpha(),(40,40))
-    images["background"] = pygame.transform.scale(pygame.image.load("images/background.jpg").convert_alpha(),(game_data["level_width"], game_data["level_height"]))
+    images["background"] = pygame.transform.scale(pygame.image.load("images/background.jpg").convert_alpha(),(40*32, 40*32))
 
     explosion_sprite_sheet = pygame.image.load("images/explosion_sprites.png").convert_alpha()
     image_explosions = []
