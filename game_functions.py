@@ -1,6 +1,6 @@
 import renderer
 import stages.stage_functions as stage_functions
-import level_loader
+import loaders.level_loader as level_loader
 
 
 def init_game_data():
@@ -33,7 +33,7 @@ def set_stage(name, game_data):
         "data": {"timer":120}
         }
     elif name == "level":
-        game_data["stage"] = level_loader.load_level()
+        game_data["stage"] = level_loader.load_level("level1")
 
 
 def apply_message(message, game_data):
