@@ -19,7 +19,7 @@ def update(projectile_object, level_data):
 
         collisions = collision_functions.collisions(projectile_object, level_data)
         for collision in collisions:
-            if collision["type"] in ["mine", "flag"]:
+            if collision["type"] in ["mine", "flag", "door"]:
                 is_collision = True
 
         if collision_functions.is_collision_with_tilemap(projectile_object["x"], projectile_object["y"], projectile_object["hitbox"], tilemap_object):

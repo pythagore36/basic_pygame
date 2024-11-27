@@ -82,15 +82,25 @@ def update(player_object, level_data):
     if player_object["next_projectile_delay"] > 0:
         player_object["next_projectile_delay"]-=1
 
+
+def solid_collision(player_object, level_data):
+    tilemap_object = level_data["tilemap_object"]
+    if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
+        return True
+    collisions = collision_functions.collisions(player_object, level_data)
+    for collision in collisions:
+        if collision["type"] in ["door"]:
+            return True    
+    return False
+
 # Cette fonction déplace le joueur à chaque frame. Deux mouvements sont effectués : un mouvement selon x et l'autre selon y.
 # Dans chaque cas, si une collision est détectée après le mouvement, le mouvement est annulé et on reste dans la position actuelle.
-def move_player(player_object, level_data):    
-    tilemap_object = level_data["tilemap_object"]
+def move_player(player_object, level_data):        
     player_object["x"] += player_object["vx"]
-    if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
+    if solid_collision(player_object, level_data):
         player_object["x"]-=player_object["vx"]
     player_object["y"] += player_object["vy"]
-    if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
+    if solid_collision(player_object, level_data):
         player_object["y"]-=player_object["vy"]
 
 def image_player(player_object):        

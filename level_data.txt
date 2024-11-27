@@ -3,9 +3,14 @@
  "entities": [
    {
     "type": "player",
-    "x": 1220,
-    "y": 1200,    
+    "x": 300,
+    "y": 300,    
     "angle": 0      
+   },
+   {
+    "type": "door",
+    "x": 640,
+    "y": 992
    },
    {
     "type": "mine",
