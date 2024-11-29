@@ -22,6 +22,12 @@ def init(game_data):
         image_door.append(door_sprite_sheet.subsurface(15 + i*64,229,64,64).convert_alpha())
     images["door"] = image_door
 
+    lever_sprite_sheet = pygame.image.load("images/lever.png").convert_alpha()
+    image_lever = []
+    image_lever.append(lever_sprite_sheet.subsurface(0,0,32,32).convert_alpha())
+    image_lever.append(lever_sprite_sheet.subsurface(0,64,32,32).convert_alpha())
+    images["lever"] = image_lever
+
     tiles_sheet = pygame.image.load("images/textures32.png").convert_alpha()
     image_tiles = []
     for i in range(15):

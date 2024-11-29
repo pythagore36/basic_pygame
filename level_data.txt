@@ -10,7 +10,49 @@
    {
     "type": "door",
     "x": 640,
-    "y": 992
+    "y": 992,
+	"open_condition": {
+		"type":"and",
+		"children":[ {
+			"type":"state",
+			"id":1,
+			"state":0
+		},{
+			"type":"state",
+			"id":2,
+			"state":0
+		},{
+			"type":"state",
+			"id":3,
+			"state":0
+		}
+		
+		]
+	}
+   },
+   {
+    "type": "lever",
+    "x": 592,
+    "y": 800,
+	"angle":90,
+	"state":1,
+	"id": 1
+   },
+   {
+    "type": "lever",
+    "x": 592,
+    "y": 1180,
+	"angle":90,
+	"state":1,
+	"id": 2
+   },
+   {
+    "type": "lever",
+    "x": 960,
+    "y": 48,
+	"angle":180,
+	"state":1,
+	"id": 3
    },
    {
     "type": "mine",

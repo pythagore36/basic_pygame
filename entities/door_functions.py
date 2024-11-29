@@ -1,5 +1,4 @@
 import collision_functions
-import pygame
 import renderer
 
 number_of_images = 7
@@ -40,6 +39,27 @@ def close(door_object, level_data):
         door_object["state"] = "closing"
         door_object["counter"] = 0
 
+def get_entity_field(id, field_name, level_data):
+    for entity in level_data["entities"]:
+        if "id" in entity and entity["id"] == id and field_name in entity:
+            return entity[field_name]
+    return None
+    
+def check_condition(condition, level_data):
+    if condition["type"] == "state":
+        id = condition["id"]
+        state = condition["state"]
+        return get_entity_field(id, "state", level_data) == state
+    if condition["type"] == "and":
+        children = condition["children"]
+        for child in children:
+            if not check_condition(child, level_data):
+                return False
+        return True
+
+
+    return False
+
 def update(door_object, level_data):    
     
     if "hitbox" not in door_object:
@@ -65,12 +85,9 @@ def update(door_object, level_data):
         if door_object["current_image"] == closed_image:
             door_object["state"] = "closed"
             
-    
-    keys = pygame.key.get_pressed()
-        
-    if keys[pygame.K_o]: 
+    if check_condition(door_object["open_condition"], level_data):
         open(door_object)
-    if keys[pygame.K_c]: 
+    else:
         close(door_object, level_data)
 
     return
