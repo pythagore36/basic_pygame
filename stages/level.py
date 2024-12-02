@@ -2,6 +2,7 @@ import entities.player_functions as player_functions
 import entities.entity_functions as entity_functions
 import entities.background_functions as background_functions
 import entities.tilemap_functions as tilemap_functions
+import entities.entity_messages as entity_messages
 import head_up_display
 
 
@@ -37,9 +38,8 @@ def apply_message(message, level_data, game_data):
         level_data["entities"].append(message["object"])
     elif message["type"] == "remove_entity":
         level_data["entities"].remove(message["object"])
-    elif message["type"] == "damage_player":
-        player_object = level_data["entities"][0]
-        player_functions.damage_player(player_object, message["object"])
+    elif message["type"] == "entity":        
+        entity_messages.apply_message(message)
     else: 
         game_data["messages"].append(message)
 

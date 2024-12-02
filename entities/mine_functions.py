@@ -9,9 +9,14 @@ def remove_mine(mine_object, level_data):
     })
 
 def damage_player(level_data, health_points):
+    player_object = level_data["entities"][0]
     level_data["messages"].append({
-        "type":"damage_player",
-        "object":health_points
+        "type":"entity",
+        "to": player_object,
+        "object": {
+            "title":"damage",
+            "health_points": health_points
+        }
     })
 
 def update(mine_object, level_data):    

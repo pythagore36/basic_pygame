@@ -3,8 +3,8 @@
  "entities": [
    {
     "type": "player",
-    "x": 300,
-    "y": 300,    
+    "x": 52,
+    "y": 48,    
     "angle": 0      
    },
    {
@@ -53,6 +53,44 @@
 	"angle":180,
 	"state":1,
 	"id": 3
+   },
+   {
+    "type": "enemy",
+    "x": 960,
+    "y": 225,
+	"angle":0
+   },{
+    "type": "enemy",
+    "x": 577,
+    "y": 137,
+	"angle":0
+   },
+   {
+    "type": "enemy",
+    "x": 76,
+    "y": 348,
+	"angle":0
+   },{
+    "type": "enemy",
+    "x": 638,
+    "y": 353,
+	"angle":0
+   },
+   {
+    "type": "enemy",
+    "x": 67,
+    "y": 530,
+	"angle":0
+   },{
+    "type": "enemy",
+    "x": 503,
+    "y": 800,
+	"angle":0
+   },{
+    "type": "enemy",
+    "x": 82,
+    "y": 1179,
+	"angle":0
    },
    {
     "type": "mine",

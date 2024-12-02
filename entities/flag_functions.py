@@ -4,7 +4,7 @@ import renderer
 def update(flag_object, level_data):    
     player_object = level_data["entities"][0]
     if flag_object["state"] == "not reached":
-        if collision_functions.is_collision(player_object["x"], player_object["y"], player_object["hitbox"], flag_object["x"], flag_object["y"], flag_object["hitbox"]):
+        if "hitbox" in player_object and collision_functions.is_collision(player_object["x"], player_object["y"], player_object["hitbox"], flag_object["x"], flag_object["y"], flag_object["hitbox"]):
             flag_object["state"] = "reached"
             flag_object["reached_countdown_to_exit"] = 60
     elif flag_object["state"] == "reached":

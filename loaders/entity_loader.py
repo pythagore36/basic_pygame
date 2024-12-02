@@ -3,6 +3,7 @@ import loaders.mine_loader as mine_loader
 import loaders.flag_loader as flag_loader
 import loaders.door_loader as door_loader
 import loaders.lever_loader as lever_loader
+import loaders.enemy_loader as enemy_loader
 
 def load_entity(entity_data):
     entity_type = entity_data["type"]
@@ -16,3 +17,5 @@ def load_entity(entity_data):
         return door_loader.load_door(entity_data)
     if entity_type == "lever":
         return lever_loader.load_lever(entity_data)
+    if entity_type == "enemy":
+        return enemy_loader.load_enemy(entity_data)

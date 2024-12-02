@@ -7,6 +7,16 @@ def remove_projectile(projectile_object, level_data):
         "object":projectile_object
     })
 
+def send_damage(entity, level_data):
+    level_data["messages"].append({
+        "type":"entity",
+        "to":entity,
+        "object":{
+            "title":"damage",
+            "health_points": 1
+        }
+        }
+    )
 
 def update(projectile_object, level_data):
     tilemap_object = level_data["tilemap_object"]
@@ -21,6 +31,10 @@ def update(projectile_object, level_data):
         for collision in collisions:
             if collision["type"] in ["mine", "flag", "door"]:
                 is_collision = True
+            if collision["type"] in ["player", "enemy"] and collision != projectile_object["source"] :
+                is_collision = True
+                send_damage(collision, level_data)
+
 
         if collision_functions.is_collision_with_tilemap(projectile_object["x"], projectile_object["y"], projectile_object["hitbox"], tilemap_object):
             is_collision = True

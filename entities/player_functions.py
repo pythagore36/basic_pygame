@@ -3,6 +3,14 @@ import collision_functions
 import renderer
 import math
 
+
+def apply_message(message):
+    message_object = message["object"]
+    if message_object["title"] == "damage":
+        damage_player(message["to"], message_object["health_points"])
+    return
+
+
 def add_projectile(player_object, level_data):
           
     projectile_object = {}
@@ -10,6 +18,7 @@ def add_projectile(player_object, level_data):
     direction_x = math.cos(math.radians(player_object["angle"]))
     direction_y = -math.sin(math.radians(player_object["angle"]))
     projectile_object["type"] = "projectile"
+    projectile_object["source"] = player_object
     projectile_object["x"] = player_object["x"] + direction_x * 10
     projectile_object["y"] = player_object["y"] + direction_y * 10
     projectile_object["state"] = 'moving'
@@ -34,6 +43,7 @@ def damage_player(player_object, health_points):
     if player_object["health"] <= 0:
         player_object["state"] = "exploding"
         player_object["explosion_timer"] = 0
+        del player_object["hitbox"]
     else:
         player_object["state"] = "hurt"
         player_object["hurt_timer"] = 60
@@ -55,6 +65,10 @@ def update(player_object, level_data):
     #fonction pygame qui nous permet de savoir quelles touches du clavier sont pressées en ce moment. keys[une certaine touche] sera True si cette touche est pressée, False sinon    
     keys = pygame.key.get_pressed()
     
+    if keys[pygame.K_c]:
+        print("current position :", player_object["x"], player_object["y"])
+
+
     # les appuis sur les touches gauche et droite modifient l'angle courant du joueur.
     if keys[pygame.K_LEFT]: 
         player_object["angle"]+=5
@@ -89,7 +103,7 @@ def solid_collision(player_object, level_data):
         return True
     collisions = collision_functions.collisions(player_object, level_data)
     for collision in collisions:
-        if collision["type"] in ["door"]:
+        if collision["type"] in ["door", "enemy"]:
             return True    
     return False
 

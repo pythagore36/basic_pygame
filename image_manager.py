@@ -38,6 +38,8 @@ def init(game_data):
 
     images["heart"] = pygame.transform.scale(pygame.image.load("images/heart.png").convert_alpha(),(40,40))
 
+    images["turret"] = pygame.image.load("images/turret.png").convert_alpha()
+
 def getImage(key, index = -1):
     if index == -1:
         return images[key]
