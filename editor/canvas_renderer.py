@@ -3,7 +3,6 @@ import io
 import tkinter as tk
 
 images = {}
-surface = pygame.Surface([1500,1500])
 font = None
 
 selectionSurface = pygame.Surface([1500,1500])
@@ -20,11 +19,21 @@ def init():
     for i in range(8):
         image_tiles.append(pygame.transform.scale(tiles_sheet.subsurface(i*64,65,64,64).convert_alpha(), (32,32)))
     images["tiles"] = image_tiles
+    
+    images["player"] = pygame.transform.scale(pygame.image.load("images/ship.png").convert_alpha(),(40,40))
+    images["flag"] = pygame.transform.scale(pygame.image.load("images/green_flag.png").convert_alpha(),(40,40))
+    images["mine"] = pygame.transform.scale(pygame.image.load("images/mine.png").convert_alpha(),(40,40))
+    
     return
 
-def render_canvas(data):
+def render_canvas(data):  
+    surface = None  
+    if "canvas_width" in data and "canvas_height" in data:
+        surface = pygame.Surface([data["canvas_width"],data["canvas_height"]])
+    else:
+        surface = pygame.Surface([1500,1500])
     surface.fill('gray')
-    tiles = data["tiles"]
+    tiles = data["tiles"]    
     pov = data["pov"]
     tile_width = data["tile_width"]
     tile_height = data["tile_height"]

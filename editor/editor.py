@@ -2,11 +2,16 @@ import tkinter as tk
 import pygame
 import canvas_renderer
 import json
+import entity_stuff
 
 pygame.init()
 pygame.font.init()
 pygame.display.set_mode((600, 600),pygame.HIDDEN)
 canvas_renderer.init()
+entity_stuff.init()
+
+data = {"mode":"tilemap"}
+selection_page = 0
 
 backgroundColor='gray75'
 
@@ -62,6 +67,33 @@ rightPanel.grid(row=0,column=2, columnspan=1, sticky="WENS")
 rightPanel.rowconfigure((0,1,2), weight=1, uniform='a')
 rightPanel.columnconfigure(0, weight=1)
 
+commandPanel = tk.Frame(master=rightPanel, bg="purple")
+commandPanel.grid(row=0, column=0, sticky='WENS')
+commandPanel.columnconfigure(0,weight=1)
+commandPanel.rowconfigure((0,1,2), weight = 1, uniform='a')
+modePanel = tk.Frame(master=commandPanel, bg = backgroundColor)
+modePanel.grid(column=0,row=0,sticky='WENS')
+
+modePanel.rowconfigure(0,weight=1)
+modePanel.columnconfigure((0,1), weight= 1)
+
+var = tk.IntVar()
+
+def select_mode():
+   global selection_page
+   if var.get() == 1:
+      data["mode"] = "tilemap"
+   if var.get() == 2:
+      data["mode"] = "entities"   
+   selection_page = 0
+   redrawSelectionCanvas()
+
+R1 = tk.Radiobutton(modePanel, text="Tile map", variable=var, value=1, command=select_mode)
+R1.select()
+R2 = tk.Radiobutton(modePanel, text="Entities", variable=var, value=2, command=select_mode)
+R1.grid(row=0, column=0)
+R2.grid(row=0, column=1)
+
 
 selectionPanel = tk.Frame(master=rightPanel, bg="yellow")
 selectionPanel.grid(row=1, column=0, sticky='WENS')
@@ -76,10 +108,8 @@ nextSelectionButton = tk.Button(selectionPanel, text='=>')
 previousSelectionButton.grid(row=1, column=0)
 nextSelectionButton.grid(row=1, column=1)
 
-f = open("level_data.txt", "r")
+f = open("level_data_edited.txt", "r")
 level_data = json.load(f)
-
-data = {}
 
 tiles = []
 
@@ -98,7 +128,7 @@ data["tile_width"] = 32
 data["tile_height"] = 32
 data["mouse_inside_canvas"] = False
 
-selection_page = 0
+
 
 canvas_image = canvas_renderer.render_canvas(data)
 
@@ -141,7 +171,9 @@ def motion(event):
   global text_coordinates, data
   tile_x = int(event.x/data["tile_width"]) + data["pov"]["x"]
   tile_y = int(event.y/data["tile_height"]) + data["pov"]["y"]
-  data["text_coordinates"] = "(" + str(tile_x) + "," + str(tile_y) + ")"
+  coord_x = int(event.x) + data["pov"]["x"] * data["tile_width"]
+  coord_y = int(event.y) + data["pov"]["y"] * data["tile_height"]
+  data["text_coordinates"] = "(" + str(tile_x) + "," + str(tile_y) + ") / (" + str(coord_x) + "," + str(coord_y) + ")"
   data["mouse_tile_x"] = tile_x
   data["mouse_tile_y"] = tile_y
   redrawCanvas()
@@ -209,12 +241,40 @@ def setup_tile(event):
    tile_x = data["mouse_tile_x"]
    tile_y = data["mouse_tile_y"] 
    
+   if tile_x < 0:
+      return
+   if tile_y < 0:
+      return
+
+   cols = len(tiles[0])
+   rows = len(tiles)
+
+   if tile_x >= cols:
+      right_add_colums(tile_x - cols + 1)
+   if tile_y >= rows:
+      bottom_add_rows(tile_y - rows + 1)
+
    tiles = data["tiles"]
 
    if tile_y < len(tiles):
       if tile_x < len(tiles[tile_y]):
          tiles[tile_y][tile_x] = data["selected_tile"]
          redrawCanvas()
+
+def right_add_colums(number_of_columns):
+   global tiles
+   for row in tiles:
+      for i in range(number_of_columns):
+         row.append(0)
+
+def bottom_add_rows(number_of_rows):
+   global tiles
+   cols = len(tiles[0])
+   for i in range(number_of_rows):
+      row = []
+      for col in range(cols):
+         row.append(0)
+      tiles.append(row)
 
 
 def save(event):

@@ -56,3 +56,6 @@ def refresh_screen():
 
 def get_animation_length(animation_key):
     return image_manager.getLength(animation_key)
+
+def get_image_size(key, index=-1):
+    return image_manager.get_image_size(key, index)

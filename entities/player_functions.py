@@ -68,12 +68,21 @@ def update(player_object, level_data):
     if keys[pygame.K_c]:
         print("current position :", player_object["x"], player_object["y"])
 
-
-    # les appuis sur les touches gauche et droite modifient l'angle courant du joueur.
-    if keys[pygame.K_LEFT]: 
-        player_object["angle"]+=5
-    if keys[pygame.K_RIGHT]: 
-        player_object["angle"]-=5
+    player_object["vx"] = 0
+    player_object["vy"] = 0
+    
+    if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LALT]:
+            player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"] + 90))
+            player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"] + 90))
+        else:            
+            player_object["angle"]+=5
+    if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_LALT]:
+            player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"] - 90))
+            player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"] - 90))
+        else: 
+            player_object["angle"]-=5
 
     # on crée un projectile si la touche espace est pressée
     if keys[pygame.K_SPACE] and player_object["next_projectile_delay"] <= 0 :
@@ -81,14 +90,12 @@ def update(player_object, level_data):
 
     # la vitesse de déplacement du joueur en x et y est décidée selon les appuis sur les touches haut et bas et selon l'angle courant du joueur. Détail à étudier ensemble.
     if keys[pygame.K_UP]:
-        player_object["vx"] = 5 * math.cos(math.radians(player_object["angle"]))
-        player_object["vy"] = -5 * math.sin(math.radians(player_object["angle"]))
+        player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"]))
+        player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"]))
     elif keys[pygame.K_DOWN]: 
-        player_object["vx"] = -5 * math.cos(math.radians(player_object["angle"]))
-        player_object["vy"] = 5 * math.sin(math.radians(player_object["angle"]))
-    else:
-        player_object["vx"] = 0
-        player_object["vy"] = 0
+        player_object["vx"] += -5 * math.cos(math.radians(player_object["angle"]))
+        player_object["vy"] += 5 * math.sin(math.radians(player_object["angle"]))
+        
     
     # on appelle la fonction de déplacement du joueur après avoir calculé sa vitesse
     move_player(player_object, level_data)
