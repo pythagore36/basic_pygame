@@ -1,9 +1,9 @@
 def load_player(player_data):
     player = {
         "type":"player",
-        "x":player_data["x"],
-        "y":player_data["y"],
-        "angle":player_data["angle"],
+        "x":int(player_data["x"]),
+        "y":int(player_data["y"]),
+        "angle":int(player_data["angle"]),
         "vx":0,
         "vy":0,
         "health":3,

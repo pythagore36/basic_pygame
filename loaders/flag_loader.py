@@ -1,8 +1,8 @@
 def load_flag(flag_data):
     flag = {
         "type":"flag",
-        "x":flag_data["x"],
-        "y":flag_data["y"],
+        "x":int(flag_data["x"]),
+        "y":int(flag_data["y"]),        
         "hitbox": {"x":-20,
                "y":-20,
                "width":40,
@@ -10,4 +10,8 @@ def load_flag(flag_data):
         "state": "not reached",
         "reached_countdown_to_exit": 0
     }
+
+    if "angle" in flag_data:
+        flag["angle"] = int(flag_data["angle"])
+
     return flag

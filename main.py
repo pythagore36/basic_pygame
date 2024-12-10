@@ -4,7 +4,7 @@ import renderer
 
 game_data = game_functions.init_game_data()
 
-renderer.init(game_data)        
+renderer.init(game_data) 
 
 # un objet pygame qui nous permet de fixer le nombre de frames executées par seconde, pour que le jeu tourne toujours à la même vitesse.
 clock=pygame.time.Clock()

@@ -1,9 +1,9 @@
 def load_enemy(enemy_data):
     lever = {
         "type":"enemy",
-        "x":enemy_data["x"],
-        "y":enemy_data["y"],
-        "angle":enemy_data["angle"],
+        "x":int(enemy_data["x"]),
+        "y":int(enemy_data["y"]),
+        "angle":int(enemy_data["angle"]),
         "hitbox":{
             "x":-45,
             "y":-20,
