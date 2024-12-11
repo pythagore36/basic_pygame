@@ -56,8 +56,16 @@ def check_condition(condition, level_data):
             if not check_condition(child, level_data):
                 return False
         return True
-
-
+    if condition["type"] == "or":
+        children = condition["children"]
+        for child in children:
+            if check_condition(child, level_data):
+                return True
+        return False
+    if condition["type"] == "false":
+        return False
+    if condition["type"] == "true":
+        return True
     return False
 
 def update(door_object, level_data):    

@@ -92,8 +92,12 @@ def render_canvas(data):
         y = y - rotated_image.get_height()/2
         surface.blit(rotated_image,(x,y))
 
-        if data["mode"] == "entities" and data["submode"] != "add_entities" and data["mouse_inside_canvas"] and "mouse_on_entity" in data and entity == data["mouse_on_entity"]:
+        if data["mode"] == "entities" and data["submode"] == "select_entity" and data["mouse_inside_canvas"] and "mouse_on_entity" in data and entity == data["mouse_on_entity"]:
             pygame.draw.rect(surface,"blue", (x,y, rotated_image.get_width(), rotated_image.get_height()), width=1)
+        
+        if entity_stuff.can_remove_by_name(entity["type"]) and data["mode"] == "entities" and data["submode"] == "remove_entity" and data["mouse_inside_canvas"] and "mouse_on_entity" in data and entity == data["mouse_on_entity"]:            
+            pygame.draw.line(surface, "red", (x,y), (x + rotated_image.get_width(), y + rotated_image.get_height()))
+            pygame.draw.line(surface, "red", (x,y + rotated_image.get_height()), (x + rotated_image.get_width(), y))
 
         if data["mode"] == "entities" and data["submode"] == "select_entity" and "current_selected_entity" in data and entity == data["current_selected_entity"]:
             pygame.draw.rect(surface,"red", (x,y, rotated_image.get_width(), rotated_image.get_height()), width=1)
@@ -142,7 +146,7 @@ def render_selection_canvas(data):
     elif data["mode"] == "entities" and data["submode"] == "add_entities":
         entity_width = entity_stuff.get_entity_data()["image_width"]
         entity_height = entity_stuff.get_entity_data()["image_height"]
-        for entity in range(first_element, last_element):
+        for entity in range(first_element, last_element + 1):
             x = (entity - first_element) * entity_width
             y = 20
             image = pygame.transform.scale(images[entity_stuff.get_entity_data()["entities"][entity]["image"]],(entity_width, entity_height))

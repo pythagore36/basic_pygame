@@ -16,11 +16,17 @@ def load_door(door_data):
     return door
 
 #format:
-# (id;state)
+#true
+#false
+# (id,state)
 # and(condition_1, condition_2, ..., condition_n)
 # or(condition_1, condition_2, ..., condition_n)
 def parse_condition(s):    
     s=s.strip()
+    if s.upper() == 'FALSE':
+        return ('', {"type": "false"})
+    if s.upper() == 'TRUE':
+        return ('', {"type": "true"})
     if s.startswith("(") and len(s)>1 and s[1:2].isdigit():
         if not ')' in s:
             return ("",None)
@@ -73,5 +79,3 @@ def parse_condition(s):
                 "children":children})
     else:
         return ("",None)
-
-print(parse_condition("and((1,0),(2,0))"))

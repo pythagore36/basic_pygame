@@ -284,7 +284,7 @@ def redrawSelectionCanvas():
    if data["mode"] == "tilemap":
       number_of_elements = number_of_tiles
    elif data["mode"] == "entities":
-      number_of_elements = len(entity_stuff.get_entity_data()["entities"])
+      number_of_elements = len(entity_stuff.get_entity_data()["entities"]) - 1
 
    page_size = int(w / element_width)
    first_element = page_size * selection_page
@@ -317,11 +317,13 @@ def motion(event):
         entity_x = int(entity["x"])
         entity_y = int(entity["y"])
         distance = math.sqrt(math.pow(coord_x - entity_x, 2) + math.pow(coord_y - entity_y, 2))
-        if distance < shortest_distance and distance < 300:
+        if distance < shortest_distance and distance < 80:
            shortest_distance = distance
            mouse_on_entity = entity
      if mouse_on_entity != None:
-        data["mouse_on_entity"] = mouse_on_entity   
+        data["mouse_on_entity"] = mouse_on_entity
+     elif "mouse_on_entity" in data:
+        del data["mouse_on_entity"]
 
   redrawCanvas()
 
@@ -358,7 +360,22 @@ def previous_selection_page(event):
 def next_selection_page(event):
    global selection_page
    w = selectionCanvas.winfo_width()   
-   number_of_pages = int((number_of_tiles + 1) * data["tile_width"] / w) + 1   
+
+   element_width = 0
+   if data["mode"] == "tilemap":
+      element_width = data["tile_width"]
+   elif data["mode"] == "entities":      
+      element_width = entity_stuff.get_entity_data()["image_width"]
+
+   number_of_elements = 0
+   if data["mode"] == "tilemap":
+      number_of_elements = number_of_tiles + 1
+   elif data["mode"] == "entities":
+      number_of_elements = len(entity_stuff.get_entity_data()["entities"])
+
+   page_size = int(w / element_width)
+
+   number_of_pages = int(number_of_elements / page_size) + 1
    if selection_page + 1 < number_of_pages:
       selection_page += 1      
       redrawSelectionCanvas()
@@ -420,6 +437,8 @@ def remove_entity(event):
    global data
    if "mouse_on_entity" in data:
       entity = data["mouse_on_entity"]
+      if not entity_stuff.can_remove_by_name(entity["type"]):
+         return
       del data["mouse_on_entity"]
       if "current_selected_entity" in data and data["current_selected_entity"] == "entity":
          del data["current_selected_entity"]
@@ -441,6 +460,11 @@ def setup_entity(event):
       "y":y,
       "angle":angle
    }
+   fields = entity_stuff.get_fields_by_entity_name(entity["type"])
+   for field in fields:
+      if "default" in field:
+         entity[field["key"]] = field["default"]
+   
    data["entities"].append(entity)
 
    data["current_selected_entity"] = entity
@@ -456,14 +480,15 @@ def setup_tile(event):
    tile_x = data["mouse_tile_x"]
    tile_y = data["mouse_tile_y"] 
    
-   if tile_x < 0:
-      return
-   if tile_y < 0:
-      return
-
    cols = len(tiles[0])
    rows = len(tiles)
 
+   if tile_x < 0:
+      left_add_columns(-tile_x)
+      tile_x = 0
+   if tile_y < 0:
+      top_add_rows(-tile_y)
+      tile_y = 0
    if tile_x >= cols:
       right_add_colums(tile_x - cols + 1)
    if tile_y >= rows:
@@ -476,11 +501,43 @@ def setup_tile(event):
          tiles[tile_y][tile_x] = data["selected_tile"]
          redrawCanvas()
 
+def right_shift_entities(number_of_columns):
+   right_shift = number_of_columns * data["tile_width"]
+   for entity in data["entities"]:
+      entity["x"] = int(entity["x"]) + right_shift
+   return
+
+def bottom_shift_entities(number_of_rows):
+   bottom_shift = number_of_rows * data["tile_height"]
+   for entity in data["entities"]:
+      entity["y"] = int(entity["y"]) + bottom_shift
+   return
+
+def left_add_columns(number_of_columns):
+   global tiles
+   for row in tiles:
+      for i in range(number_of_columns):
+         row.insert(0,0)
+   right_shift_entities(number_of_columns)
+   data["pov"]["x"] += number_of_columns
+
+
 def right_add_colums(number_of_columns):
    global tiles
    for row in tiles:
       for i in range(number_of_columns):
          row.append(0)
+
+def top_add_rows(number_of_rows):
+   global tiles
+   cols = len(tiles[0])
+   for i in range(number_of_rows):
+      row = []
+      for col in range(cols):
+         row.append(0)
+      tiles.insert(0,row)
+   bottom_shift_entities(number_of_rows)
+   data["pov"]["y"] += number_of_rows
 
 def bottom_add_rows(number_of_rows):
    global tiles

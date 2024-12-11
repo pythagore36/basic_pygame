@@ -6,11 +6,6 @@ def init():
     global entity_data, entity_by_name
     entities = [{
         "id":0,
-        "name":"player",
-        "image":"player",
-        "fields":[]
-    },{
-        "id":1,
         "name":"mine",
         "image":"mine",
         "fields":[{
@@ -24,12 +19,12 @@ def init():
             "default":"(0,0)"
         }]
     },{
-        "id":2,
+        "id":1,
         "name":"flag",
         "image":"flag",
         "fields":[]
     },{
-        "id":3,
+        "id":2,
         "name":"door",
         "image":"door",
         "fields":[{
@@ -37,12 +32,12 @@ def init():
             "default":"false"
         }]
     },{
-        "id":4,
+        "id":3,
         "name":"enemy",
         "image":"enemy",
         "fields":[]
     },{
-        "id":5,
+        "id":4,
         "name":"lever",
         "image":"lever",
         "fields":[{
@@ -54,12 +49,21 @@ def init():
         }]
     }
     ]
+    select_only_entities = [{
+        "name":"player",
+        "image":"player",
+        "fields":[]
+    }]
     entity_data["entities"] = entities
+    entity_data["select_only_entities"] = select_only_entities
     entity_data["image_width"] = 40
     entity_data["image_height"] = 40
 
     for entity in entity_data["entities"]:
         entity_by_name[entity["name"]] = entity
+    for entity in entity_data["select_only_entities"]:
+        entity_by_name[entity["name"]] = entity
+
 
 def get_entity_data():
     return entity_data
@@ -69,3 +73,6 @@ def get_image_by_entity_name(name):
 
 def get_fields_by_entity_name(name):
     return entity_by_name[name]["fields"]
+
+def can_remove_by_name(name):
+    return entity_by_name[name] in entity_data["entities"]
