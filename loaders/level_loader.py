@@ -4,7 +4,7 @@ import loaders.tilemap_loader as tilemap_loader
 
 def load_level(name):
 
-    data = data_provider.get_data(name)
+    data = data_provider.get_level_data(name)
 
     
     level_data = {}

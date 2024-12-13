@@ -7,5 +7,5 @@ def update(data, game_data):
 
 
 def render(data, game_data):    
-    renderer.write_text_big("You lose ! Game over !", 250)
+    renderer.write_text_big("You lose !", 250)
     renderer.write_text_middle("Try again", 350)

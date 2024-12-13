@@ -11,6 +11,19 @@ pygame.display.set_mode((600, 600),pygame.HIDDEN)
 entity_stuff.init()
 canvas_renderer.init()
 
+path = "data/data_directory.txt"
+current_level_file = ""
+
+project_data_file = open(path, "r")
+project_data = json.load(project_data_file)
+
+entry_level = project_data["entry_level"]
+level = None
+for l in project_data["levels"]:
+   if entry_level == l["key"]:
+      level = l
+
+current_level_file = level["file"]
 
 data = {"mode":"tilemap", "submode":""}
 selection_page = 0
@@ -152,7 +165,7 @@ entityFieldPanel = tk.Frame(master=rightPanel, bg=backgroundColor)
 
 entityFieldEntries = []
 
-f = open("level_data_edited.txt", "r")
+f = open(current_level_file, "r")
 level_data = json.load(f)
 
 tiles = []
@@ -559,7 +572,7 @@ def save(event):
       tiles_to_save.append(",".join(row_str))
    level_data["tilemap"]["tiles"] = tiles_to_save
 
-   out_file = open("level_data_edited.txt", "w")
+   out_file = open(current_level_file, "w")
    json.dump(level_data, out_file, indent=4)   
    
 

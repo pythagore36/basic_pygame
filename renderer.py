@@ -8,10 +8,10 @@ def init(game_data):
     pygame.font.init()
 
     renderer_object["font_big"] = pygame.font.SysFont("arial",40)
-    renderer_object["font_middle"] = pygame.font.SysFont("arial",30)
-    renderer_object["screen_window"] = pygame.display.set_mode((600, 600),pygame.RESIZABLE)
+    renderer_object["font_middle"] = pygame.font.SysFont("arial",30)    
     screen_width = game_data["screen_width"]
     screen_height = game_data["screen_height"]
+    renderer_object["screen_window"] = pygame.display.set_mode((screen_width, screen_height),pygame.RESIZABLE)
     renderer_object["game_surface"] = pygame.Surface([screen_width, screen_height])
 
     pygame.display.set_caption("Basic Pygame")

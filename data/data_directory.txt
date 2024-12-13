@@ -1,0 +1,17 @@
+{
+    "name": "Basic Pygame",
+    "screen_width": 608,
+    "screen_height": 608,
+    "entry_level":"level1",
+    "levels": [
+        {   
+			"key":"level1",
+            "name": "Level 1",
+            "file": "data/level1.txt"            
+        },{ 
+			"key": "level2",
+            "name": "Level 2",
+            "file": "data/level2.txt"            
+        }
+    ]
+}

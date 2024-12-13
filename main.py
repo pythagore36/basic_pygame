@@ -1,6 +1,9 @@
 import pygame
 import game_functions
 import renderer
+import data_provider
+
+data_provider.init()
 
 game_data = game_functions.init_game_data()
 

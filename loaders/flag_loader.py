@@ -13,5 +13,7 @@ def load_flag(flag_data):
 
     if "angle" in flag_data:
         flag["angle"] = int(flag_data["angle"])
+    if "destination" in flag_data:
+        flag["destination"] = flag_data["destination"]
 
     return flag

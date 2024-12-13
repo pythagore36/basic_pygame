@@ -3,7 +3,7 @@
     "entities": [
         {
             "type": "player",
-            "x": 277,
+            "x": "270",
             "y": 930,
             "angle": 0
         },
@@ -152,7 +152,8 @@
         {
             "type": "flag",
             "x": 2772,
-            "y": 927
+            "y": 927,
+            "destination": "level2"
         },
         {
             "type": "enemy",
