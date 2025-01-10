@@ -47,6 +47,28 @@ def draw_image(image_key, x, y, image_index=-1, centered = False, angle = 0):
         y = y - rotated_image.get_height()/2
     game_surface.blit(rotated_image,(x,y)) 
 
+def render_sprite(entity, camera):
+    if "current_sprite" in entity:
+        sprite = entity["current_sprite"]
+        if sprite == None or sprite["type"] == "None":
+            return
+        elif sprite["type"] == "image":
+            image_key = sprite["image"]
+            angle = 0
+            if "angle" in entity:
+                angle = entity["angle"]
+            draw_image(image_key, entity["x"] - camera["x"], entity["y"] - camera["y"], centered=True, angle = angle)
+        elif sprite["type"] == "animation":
+            if not "frame" in entity:
+                entity["frame"] = 0
+            i = int(entity["frame"]/sprite["frames_per_image"]) % len(sprite["images"])
+            image_key = sprite["images"][i]
+            angle = 0
+            if "angle" in entity:
+                angle = entity["angle"]
+            draw_image(image_key, entity["x"] - camera["x"], entity["y"] - camera["y"], centered=True, angle = angle)
+            entity["frame"] += 1
+
 def refresh_screen():
     game_surface = renderer_object["game_surface"]
     screen_window = renderer_object["screen_window"]

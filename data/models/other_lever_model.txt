@@ -1,0 +1,46 @@
+{
+    "name": "other_lever_model",
+	"sprites":["other_lever_0", "other_lever_1"],
+    "state_sprites": {	
+		"0" : {
+		"type": "image",		
+		"image": "other_lever_0"
+	},
+		"1" : {
+		"type": "image",		
+		"image": "other_lever_1"
+	}
+	},
+	"hitbox": {
+		"x":-32,
+		"y":-12,
+		"width":64,
+		"height":64
+	},    
+	"model_sprites": {
+		"other_lever_0" : {
+			"key":"other_lever_0",
+			"path":"images/levers/lever_02_03.png",
+			"number_of_images":1,
+			"x":0,
+			"y":0,
+			"width_origin": 466,
+			"height_origin": 291,
+			"images_per_row": 1,
+			"width_game": 64,
+			"height_game": 64
+		},
+		"other_lever_1" : {
+			"key":"other_lever_1",
+			"path":"images/levers/lever_02_02.png",
+			"number_of_images":1,
+			"x":0,
+			"y":0,
+			"width_origin": 466,
+			"height_origin": 291,
+			"images_per_row": 1,
+			"width_game": 64,
+			"height_game": 64
+		}
+	}
+}

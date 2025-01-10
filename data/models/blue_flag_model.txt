@@ -1,0 +1,19 @@
+{
+    "name": "blue_flag_model",
+	"sprites":["blue_flag"],
+    "not_reached_sprite":{
+		"type": "animation",
+		"cycle": "True",
+		"images": ["blue_flag0","blue_flag1","blue_flag2","blue_flag3","blue_flag4","blue_flag5","blue_flag6"],
+		"frames_per_image":3
+	},
+	"reached_sprite":{
+		"type": "None"		
+	},
+	"hitbox": {
+		"x":-20,
+		"y":-20,
+		"width":40,
+		"height":40
+	}
+}

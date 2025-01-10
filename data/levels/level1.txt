@@ -9,25 +9,29 @@
         },
         {
             "type": "door",
+            "model": "door_model_2",
             "x": 832,
             "y": 928,
             "open_condition": "and((1,0),(2,0))"
         },
         {
             "type": "door",
+            "model": "door_model_1",
             "x": 1440,
             "y": 928,
             "open_condition": "and((3,0),(4,0))"
         },
         {
             "type": "door",
+            "model": "door_model_1",
             "x": 2720,
             "y": 928,
             "open_condition": "and((5,0),(6,1),(7,0))"
         },
         {
             "type": "lever",
-            "x": 784,
+            "model": "other_lever_model",
+            "x": 768,
             "y": 800,
             "angle": 90,
             "state": 1,
@@ -35,7 +39,8 @@
         },
         {
             "type": "lever",
-            "x": 784,
+            "model": "other_lever_model",
+            "x": 768,
             "y": 1050,
             "angle": 90,
             "state": 1,
@@ -43,6 +48,7 @@
         },
         {
             "type": "lever",
+            "model": "basic_lever_model",
             "x": 1126,
             "y": 687,
             "angle": 180,
@@ -51,6 +57,7 @@
         },
         {
             "type": "lever",
+            "model": "basic_lever_model",
             "x": 1126,
             "y": 1200,
             "angle": 0,
@@ -59,6 +66,7 @@
         },
         {
             "type": "lever",
+            "model": "basic_lever_model",
             "x": 2674,
             "y": 2109,
             "angle": 90,
@@ -67,6 +75,7 @@
         },
         {
             "type": "lever",
+            "model": "basic_lever_model",
             "x": 2031,
             "y": 2109,
             "angle": -90,
@@ -75,6 +84,7 @@
         },
         {
             "type": "lever",
+            "model": "basic_lever_model",
             "x": 2342,
             "y": 2385,
             "angle": 0,
@@ -151,6 +161,7 @@
         },
         {
             "type": "flag",
+            "model": "blue_flag_model",
             "x": 2772,
             "y": 927,
             "destination": "level2"

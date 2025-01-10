@@ -6,6 +6,13 @@ import entities.door_functions as door_functions
 import entities.lever_functions as lever_functions
 import entities.enemy_functions as enemy_functions
 
+def init(entity):
+    if entity["type"] == "flag":
+        flag_functions.init(entity)
+    if entity["type"] == "door":
+        door_functions.init(entity)
+
+
 def update(entity, level_data):
     if entity["type"] == "player":
         player_functions.update(entity, level_data)

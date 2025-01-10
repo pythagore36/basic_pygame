@@ -1,0 +1,54 @@
+{
+    "name": "door_model_2",
+	"sprites":["door_metal"],
+    "state_sprites": {	
+		"closed" : {
+		"type": "image",		
+		"image": "door_metal0"
+	},
+		"open" : {
+		"type": "image",		
+		"image": "door_metal7"
+	},
+		"opening" : {
+		"type": "animation",		
+		"cycle": "False",
+		"images": ["door_metal0","door_metal1","door_metal2","door_metal3","door_metal4","door_metal5","door_metal6","door_metal7"],
+		"frames_per_image":6
+	}, 
+		"closing" : {
+		"type": "animation",		
+		"cycle": "False",
+		"images": ["door_metal7","door_metal6","door_metal5","door_metal4","door_metal3","door_metal2","door_metal1","door_metal0"],
+		"frames_per_image":6
+	}
+	},
+	"hitbox_open" : {
+   		"x":-32,
+    	"y":-32,
+    	"width":64,
+    	"height":1
+	},
+	"hitbox_closed": {
+    	"x":-32,
+    	"y":-32,
+    	"width":64,
+    	"height":64
+},
+	"model_sprites": {
+		"door_metal" : {
+			"key":"door_metal",
+			"path":"images/doors.png",
+			"number_of_images":8,
+			"x":15,
+			"y":157,
+			"width_origin": 64,
+			"height_origin": 64,
+			"images_per_row": 8,
+			"width_game": 64,
+			"height_game": 64
+		}
+	},
+	"opening_number_frames":48,
+	"closing_number_frames":48
+}

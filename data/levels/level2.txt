@@ -9,12 +9,14 @@
         },
         {
             "type": "door",
+            "model": "door_model_1",
             "x": 640,
             "y": 992,
             "open_condition": "and((1,0), (2,0), (3,0))"
         },
         {
             "type": "lever",
+            "model":"basic_lever_model",
             "x": 592,
             "y": 800,
             "angle": 90,
@@ -23,6 +25,7 @@
         },
         {
             "type": "lever",
+            "model":"basic_lever_model",
             "x": 592,
             "y": 1180,
             "angle": 90,
@@ -31,6 +34,7 @@
         },
         {
             "type": "lever",
+            "model":"basic_lever_model",
             "x": 960,
             "y": 48,
             "angle": 180,
@@ -114,7 +118,8 @@
         {
             "type": "flag",
             "x": 950,
-            "y": 900
+            "y": 900,
+			"model":"blue_flag_model"
         }
     ],
     "tilemap": {

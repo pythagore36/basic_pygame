@@ -22,12 +22,21 @@ def init():
         "id":1,
         "name":"flag",
         "image":"flag",
-        "fields":[]
+        "fields":[{
+            "key":"model",
+            "default":"blue_flag_model"
+        },{
+            "key":"destination",
+            "default":""
+        }]
     },{
         "id":2,
         "name":"door",
         "image":"door",
         "fields":[{
+            "key":"model",
+            "default":"door_model_1"
+        },{
             "key":"open_condition",
             "default":"false"
         }]
@@ -41,6 +50,9 @@ def init():
         "name":"lever",
         "image":"lever",
         "fields":[{
+            "key":"model",
+            "default":"basic_lever_model"
+        },{
             "key":"state",
             "default":0
         },{

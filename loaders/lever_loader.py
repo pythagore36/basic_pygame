@@ -1,3 +1,5 @@
+import loaders.model_loader as model_loader
+
 def load_lever(lever_data):
     lever = {
         "type":"lever",
@@ -13,4 +15,5 @@ def load_lever(lever_data):
         "state": int(lever_data["state"]),
         "id": int(lever_data["id"])
     }
+
     return lever

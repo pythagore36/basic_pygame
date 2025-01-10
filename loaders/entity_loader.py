@@ -4,18 +4,29 @@ import loaders.flag_loader as flag_loader
 import loaders.door_loader as door_loader
 import loaders.lever_loader as lever_loader
 import loaders.enemy_loader as enemy_loader
+import loaders.model_loader as model_loader
+
+import entities.entity_functions as entity_functions
 
 def load_entity(entity_data):
     entity_type = entity_data["type"]
+    entity = None
     if entity_type == "player":
-        return player_loader.load_player(entity_data)
+        entity =  player_loader.load_player(entity_data)
     if entity_type == "mine":
-        return mine_loader.load_mine(entity_data)
+        entity =  mine_loader.load_mine(entity_data)
     if entity_type == "flag":
-        return flag_loader.load_flag(entity_data)
+        entity =  flag_loader.load_flag(entity_data)
     if entity_type == "door":
-        return door_loader.load_door(entity_data)
+        entity =  door_loader.load_door(entity_data)
     if entity_type == "lever":
-        return lever_loader.load_lever(entity_data)
+        entity =  lever_loader.load_lever(entity_data)
     if entity_type == "enemy":
-        return enemy_loader.load_enemy(entity_data)
+        entity =  enemy_loader.load_enemy(entity_data)
+
+    if "model" in entity_data:
+        entity["model"] = model_loader.load_model(entity_data["model"])
+
+    entity_functions.init(entity)
+
+    return entity

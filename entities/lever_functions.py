@@ -8,6 +8,9 @@ def update(lever_object, level_data):
 
     global ctrl_key_pressed
 
+    if "model" in lever_object:
+        lever_object["hitbox"] = lever_object["model"]["hitbox"]
+
     keys = pygame.key.get_pressed()
         
     if keys[pygame.K_LCTRL] and not ctrl_key_pressed:        
@@ -25,8 +28,7 @@ def update(lever_object, level_data):
     return
 
 def render(lever_data, level_data):
-    camera_x = level_data["camera"]["x"]
-    camera_y = level_data["camera"]["y"]    
-    x_draw = lever_data["x"] - camera_x
-    y_draw = lever_data["y"] - camera_y
-    renderer.draw_image("lever", x_draw, y_draw, image_index=lever_data["state"], centered=True, angle=lever_data["angle"])
+    state = str(lever_data["state"])
+    if "model" in lever_data and "state_sprites" in lever_data["model"] and state in lever_data["model"]["state_sprites"]:
+        lever_data["current_sprite"] = lever_data["model"]["state_sprites"][state]
+        renderer.render_sprite(lever_data, level_data["camera"])    

@@ -23,7 +23,7 @@ for l in project_data["levels"]:
    if entry_level == l["key"]:
       level = l
 
-current_level_file = level["file"]
+current_level_file = level["path"]
 
 data = {"mode":"tilemap", "submode":""}
 selection_page = 0

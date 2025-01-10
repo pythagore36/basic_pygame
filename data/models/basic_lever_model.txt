@@ -1,0 +1,46 @@
+{
+    "name": "basic_lever_model",
+	"sprites":["basic_lever_0", "basic_lever_1"],
+    "state_sprites": {	
+		"0" : {
+		"type": "image",		
+		"image": "basic_lever_0"
+	},
+		"1" : {
+		"type": "image",		
+		"image": "basic_lever_1"
+	}
+	},
+	"hitbox": {
+		"x":-16,
+		"y":-6,
+		"width":32,
+		"height":32
+	},    
+	"model_sprites": {
+		"basic_lever_0" : {
+			"key":"basic_lever_0",
+			"path":"images/lever.png",
+			"number_of_images":1,
+			"x":0,
+			"y":0,
+			"width_origin": 32,
+			"height_origin": 32,
+			"images_per_row": 1,
+			"width_game": 32,
+			"height_game": 32
+		},
+		"basic_lever_1" : {
+			"key":"basic_lever_1",
+			"path":"images/lever.png",
+			"number_of_images":1,
+			"x":0,
+			"y":64,
+			"width_origin": 32,
+			"height_origin": 32,
+			"images_per_row": 1,
+			"width_game": 32,
+			"height_game": 32
+		}
+	}
+}
