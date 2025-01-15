@@ -4,29 +4,8 @@ images = {}
 
 def init(game_data):
     global images
-    images["player"] = pygame.image.load("images/ship.png").convert_alpha()
-    images["fireball"] = pygame.image.load("images/fireball.png").convert_alpha()
-    images["flag"] = pygame.transform.scale(pygame.image.load("images/flag.png").convert_alpha(),(40,40))
-    images["mine"] = pygame.transform.scale(pygame.image.load("images/mine.png").convert_alpha(),(40,40))
+
     images["background"] = pygame.transform.scale(pygame.image.load("images/background.jpg").convert_alpha(), (974,608))
-
-    explosion_sprite_sheet = pygame.image.load("images/explosion_sprites.png").convert_alpha()
-    image_explosions = []
-    for i in range(13):
-        image_explosions.append(explosion_sprite_sheet.subsurface(i*39,117,39,39).convert_alpha())
-    images["explosion"] = image_explosions
-
-    door_sprite_sheet = pygame.image.load("images/doors.png").convert_alpha()
-    image_door = []
-    for i in range(7):
-        image_door.append(door_sprite_sheet.subsurface(15 + i*64,229,64,64).convert_alpha())
-    images["door"] = image_door
-
-    lever_sprite_sheet = pygame.image.load("images/lever.png").convert_alpha()
-    image_lever = []
-    image_lever.append(lever_sprite_sheet.subsurface(0,0,32,32).convert_alpha())
-    image_lever.append(lever_sprite_sheet.subsurface(0,64,32,32).convert_alpha())
-    images["lever"] = image_lever
 
     tiles_sheet = pygame.image.load("images/textures32.png").convert_alpha()
     image_tiles = []
@@ -38,7 +17,6 @@ def init(game_data):
 
     images["heart"] = pygame.transform.scale(pygame.image.load("images/heart.png").convert_alpha(),(40,40))
 
-    images["turret"] = pygame.image.load("images/turret.png").convert_alpha()
 
 def load_sprite(sprite):
     global images

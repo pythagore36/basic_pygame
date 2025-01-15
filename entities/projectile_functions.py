@@ -1,5 +1,20 @@
+import math
 import collision_functions
 import renderer
+
+def init(projectile_object):
+    global explosion_counter
+    model = projectile_object["model"]
+    projectile_object["state"] = 'moving'
+    direction_x = math.cos(math.radians(projectile_object["angle"]))
+    direction_y = -math.sin(math.radians(projectile_object["angle"]))    
+    projectile_speed = model["speed"]
+    projectile_object["vx"] = direction_x * projectile_speed
+    projectile_object["vy"] = direction_y * projectile_speed
+    projectile_object["hitbox"] = model["hitbox"]    
+    explosion_counter = model["explosion_counter"]
+
+
 
 def remove_projectile(projectile_object, level_data):    
     level_data["messages"].append({
@@ -41,24 +56,14 @@ def update(projectile_object, level_data):
         
         if is_collision:
             projectile_object["state"] = 'exploding'
-            projectile_object["explosion_timer"] = 0            
-    # si le projectile est en mode "exploding", on augmente le timer de l'explosion  pour qu'on sache à quelle image on en est.
+            projectile_object["explosion_counter"] = explosion_counter                
     elif projectile_object["state"] == 'exploding':
-        projectile_object["explosion_timer"] += 1
-        # si on est arrivé à la fin de l'animation d'explosion, on supprime le projectile
-        if projectile_object["explosion_timer"] > projectile_object["explosion_animation_delay"] * renderer.get_animation_length("explosion"):
+        projectile_object["explosion_counter"] -= 1        
+        if projectile_object["explosion_counter"] <= 0:
             remove_projectile(projectile_object, level_data)
 
-def image_projectile(projectile_object, level_data):        
-    if projectile_object["state"] == 'moving':
-        return ("fireball", -1)    
-    i = int(projectile_object["explosion_timer"] / projectile_object["explosion_animation_delay"] ) % renderer.get_animation_length("explosion")
-    return ("explosion", i)
-
 def render(projectile_object, level_data):
-    camera_x = level_data["camera"]["x"]
-    camera_y = level_data["camera"]["y"]    
-    (image_key, image_index) = image_projectile(projectile_object, level_data)
-    x_draw = projectile_object["x"] - camera_x
-    y_draw = projectile_object["y"] - camera_y
-    renderer.draw_image(image_key, x_draw, y_draw, image_index, True, projectile_object["angle"] )  
+    state = str(projectile_object["state"])
+    if "model" in projectile_object and "state_sprites" in projectile_object["model"] and state in projectile_object["model"]["state_sprites"]:
+        projectile_object["current_sprite"] = projectile_object["model"]["state_sprites"][state]
+        renderer.render_sprite(projectile_object, level_data["camera"])   

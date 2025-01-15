@@ -1,0 +1,39 @@
+{
+    "name": "mine_model",
+	"sprites":["mine", "explosion"],
+    "state_sprites": {	
+		"standing" : {
+		"type": "image",		
+		"image": "mine"
+	},
+		"patrolling" : {
+		"type": "image",		
+		"image": "mine"
+	},
+		"exploding" : {
+		"type": "animation",
+		"cycle": "False",
+		"images": ["explosion0","explosion1","explosion2","explosion3","explosion4","explosion5","explosion6","explosion7","explosion8","explosion9","explosion10","explosion11","explosion12"],
+		"frames_per_image":3
+	}
+	},
+	"explosion_counter" : 39,
+	"hitbox": {"x":-15,
+       			"y":-15,
+       		 	"width":30,
+        		"height":30},
+	"model_sprites": {
+		"mine" : {
+			"key":"mine",
+			"path":"images/mine.png",
+			"number_of_images":1,
+			"x":0,
+			"y":0,
+			"width_origin": 2400,
+			"height_origin": 2336,
+			"images_per_row": 1,
+			"width_game": 40,
+			"height_game": 40
+		}
+	}
+}

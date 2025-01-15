@@ -30,20 +30,35 @@
 		},{
 			"key":"door_model_2",
 			"path":"data/models/door_model_2.txt"
-		}		
+		},{
+			"key":"mine_model",
+			"path":"data/models/mine_model.txt"
+		},{
+			"key":"player_projectile",
+			"path":"data/models/player_projectile.txt"
+		},{
+			"key":"turret_projectile",
+			"path":"data/models/turret_projectile.txt"
+		},{
+			"key":"turret_model",
+			"path":"data/models/turret_model.txt"
+		},{
+			"key":"ship_model",
+			"path":"data/models/ship_model.txt"
+		}
 	],
 	"sprites": [
 		{
-			"key":"blue_flag",
-			"path":"images/blue_flag.png",
-			"number_of_images":7,
+			"key":"explosion",
+			"path":"images/explosion_sprites.png",
+			"number_of_images":13,
 			"x":0,
-			"y":0,
-			"width_origin": 64,
-			"height_origin": 64,
-			"images_per_row": 7,
-			"width_game": 40,
-			"height_game": 40
-		}
+			"y":117,
+			"width_origin": 39,
+			"height_origin": 39,
+			"images_per_row": 13,
+			"width_game": 39,
+			"height_game": 39
+		}		
 	]
 }

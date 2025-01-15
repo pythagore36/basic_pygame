@@ -3,6 +3,19 @@ import collision_functions
 import renderer
 import math
 
+def init(player_object):
+    model = player_object["model"]
+
+    player_object["vx"] = 0
+    player_object["vy"] = 0
+    player_object["state"] = "alive"
+    player_object["next_projectile_delay"] = 0
+    player_object["health"] = model["health"]
+    player_object["delay_between_shoots"] = model["delay_between_shoots"]
+    player_object["explosion_counter"] = model["explosion_counter"]
+    player_object["speed"] = model["speed"]
+    player_object["rotation_speed"] = model["rotation_speed"]
+    player_object["hitbox"] = model["hitbox"]
 
 def apply_message(message):
     message_object = message["object"]
@@ -13,28 +26,24 @@ def apply_message(message):
 
 def add_projectile(player_object, level_data):
           
-    projectile_object = {}
+    projectile_data = {}
 
     direction_x = math.cos(math.radians(player_object["angle"]))
     direction_y = -math.sin(math.radians(player_object["angle"]))
-    projectile_object["type"] = "projectile"
-    projectile_object["source"] = player_object
-    projectile_object["x"] = player_object["x"] + direction_x * 10
-    projectile_object["y"] = player_object["y"] + direction_y * 10
-    projectile_object["state"] = 'moving'
-    projectile_object["angle"] = player_object["angle"]
-    projectile_object["moving_timer"] = 300
-    projectile_object["vx"] = direction_x * 10
-    projectile_object["vy"] = direction_y * 10
-    projectile_object["hitbox"] = {"x":-15, "y":-15, "width":30, "height":30}
-    projectile_object["explosion_animation_delay"] = 3
+    projectile_data["type"] = "projectile"
+    projectile_data["source"] = player_object
+    projectile_data["x"] = player_object["x"] + direction_x * 10
+    projectile_data["y"] = player_object["y"] + direction_y * 10
+    projectile_data["angle"] = player_object["angle"]
+    projectile_data["model"] = "player_projectile"
+
 
     level_data["messages"].append({
         "type":"add_entity",
-        "object":projectile_object
+        "object":projectile_data
     })
 
-    player_object["next_projectile_delay"] = 10
+    player_object["next_projectile_delay"] = player_object["delay_between_shoots"]
 
 
 def damage_player(player_object, health_points):
@@ -42,7 +51,7 @@ def damage_player(player_object, health_points):
     player_object["health"]-=health_points
     if player_object["health"] <= 0:
         player_object["state"] = "exploding"
-        player_object["explosion_timer"] = 0
+        player_object["explosion_timer"] = player_object["explosion_counter"] 
         del player_object["hitbox"]
     else:
         player_object["state"] = "hurt"
@@ -52,8 +61,8 @@ def damage_player(player_object, health_points):
 def update(player_object, level_data):    
     
     if player_object["state"] == "exploding":
-        player_object["explosion_timer"] += 1
-        if player_object["explosion_timer"] > player_object["explosion_animation_delay"] * renderer.get_animation_length("explosion"):
+        player_object["explosion_timer"] -= 1
+        if player_object["explosion_timer"] <= 0:
             level_data["messages"].append({"type":"set_stage", "object":"game_over"})
         return
     
@@ -71,18 +80,21 @@ def update(player_object, level_data):
     player_object["vx"] = 0
     player_object["vy"] = 0
     
+    speed = player_object["speed"]
+    rotation_speed = player_object["rotation_speed"]
+
     if keys[pygame.K_LEFT]:
         if keys[pygame.K_LALT]:
-            player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"] + 90))
-            player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"] + 90))
+            player_object["vx"] += speed * math.cos(math.radians(player_object["angle"] + 90))
+            player_object["vy"] += -speed * math.sin(math.radians(player_object["angle"] + 90))
         else:            
-            player_object["angle"]+=5
+            player_object["angle"]+=rotation_speed
     if keys[pygame.K_RIGHT]:
         if keys[pygame.K_LALT]:
-            player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"] - 90))
-            player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"] - 90))
+            player_object["vx"] += speed * math.cos(math.radians(player_object["angle"] - 90))
+            player_object["vy"] += -speed * math.sin(math.radians(player_object["angle"] - 90))
         else: 
-            player_object["angle"]-=5
+            player_object["angle"]-=rotation_speed
 
     # on crée un projectile si la touche espace est pressée
     if keys[pygame.K_SPACE] and player_object["next_projectile_delay"] <= 0 :
@@ -90,11 +102,11 @@ def update(player_object, level_data):
 
     # la vitesse de déplacement du joueur en x et y est décidée selon les appuis sur les touches haut et bas et selon l'angle courant du joueur. Détail à étudier ensemble.
     if keys[pygame.K_UP]:
-        player_object["vx"] += 5 * math.cos(math.radians(player_object["angle"]))
-        player_object["vy"] += -5 * math.sin(math.radians(player_object["angle"]))
+        player_object["vx"] += speed * math.cos(math.radians(player_object["angle"]))
+        player_object["vy"] += -speed * math.sin(math.radians(player_object["angle"]))
     elif keys[pygame.K_DOWN]: 
-        player_object["vx"] += -5 * math.cos(math.radians(player_object["angle"]))
-        player_object["vy"] += 5 * math.sin(math.radians(player_object["angle"]))
+        player_object["vx"] += -speed * math.cos(math.radians(player_object["angle"]))
+        player_object["vy"] += speed * math.sin(math.radians(player_object["angle"]))
         
     
     # on appelle la fonction de déplacement du joueur après avoir calculé sa vitesse
@@ -137,10 +149,18 @@ def image_player(player_object):
         else:
             return ("null", -1)
 
+def compute_image(player_object):        
+    state = str(player_object["state"])
+    if "model" in player_object and "state_sprites" in player_object["model"] and state in player_object["model"]["state_sprites"]:
+        player_object["current_sprite"] = player_object["model"]["state_sprites"][state]
+
+    if player_object["state"] == 'hurt':
+        i = int(player_object["hurt_timer"] / 3)
+        if i%2 == 0:
+            player_object["current_sprite"] = None
+
+
 def render(player_object, level_data):
-    camera_x = level_data["camera"]["x"]
-    camera_y = level_data["camera"]["y"]
-    x_draw = player_object["x"] - camera_x
-    y_draw = player_object["y"] - camera_y
-    (image_key, image_index) = image_player(player_object)
-    renderer.draw_image(image_key, x_draw, y_draw, image_index, centered=True, angle=player_object["angle"])
+    compute_image(player_object)
+    if player_object["current_sprite"] != None:
+        renderer.render_sprite(player_object, level_data["camera"])

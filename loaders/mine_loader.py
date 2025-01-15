@@ -3,13 +3,6 @@ def load_mine(mine_data):
         "type":"mine",
         "x":int(mine_data["x"]),
         "y":int(mine_data["y"]),                
-        "explosion_animation_delay":3,
-        "vx":0,
-        "vy":0,
-        "hitbox": {"x":-15,
-        "y":-15,
-        "width":30,
-        "height":30},
         "state":mine_data["state"]
     }
 

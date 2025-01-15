@@ -2,9 +2,14 @@ import renderer
 import entities.utils as utils
 import math
 
-activation_distance = 400
-delay_between_shoots = 90
-projectile_speed = 5
+def init(enemy_object):    
+    model = enemy_object["model"]
+    enemy_object["activation_distance"] = model["activation_distance"]
+    enemy_object["delay_between_shoots"] = model["delay_between_shoots"]
+    enemy_object["projectile_model"] = model["projectile_model"]
+    enemy_object["health"] = model["health"]
+    enemy_object["hitbox"] = model["hitbox"]
+    enemy_object["explosion_counter"] = model["explosion_counter"]
 
 
 def apply_message(message):
@@ -14,8 +19,7 @@ def apply_message(message):
         entity["health"]-=message_object["health_points"]
     if entity["health"] <= 0:
         entity["state"] = "exploding"
-        entity["explosion_timer"] = 0
-        entity["explosion_animation_delay"] = 3
+        entity["explosion_timer"] = entity["explosion_counter"]
         del entity["hitbox"]
     else:
         entity["state"] = "hurt"
@@ -30,25 +34,20 @@ def remove_enemy(enemy_object, level_data):
 
 def shoot_projectile(enemy_object, level_data):
           
-    projectile_object = {}
+    projectile_data = {}
 
     direction_x = math.cos(math.radians(enemy_object["angle"]))
     direction_y = -math.sin(math.radians(enemy_object["angle"]))
-    projectile_object["type"] = "projectile"
-    projectile_object["source"] = enemy_object
-    projectile_object["x"] = enemy_object["x"] + direction_x * 30
-    projectile_object["y"] = enemy_object["y"] + direction_y * 30
-    projectile_object["state"] = 'moving'
-    projectile_object["angle"] = enemy_object["angle"]
-    projectile_object["moving_timer"] = 300
-    projectile_object["vx"] = direction_x * projectile_speed
-    projectile_object["vy"] = direction_y * projectile_speed
-    projectile_object["hitbox"] = {"x":-15, "y":-15, "width":30, "height":30}
-    projectile_object["explosion_animation_delay"] = 3
+    projectile_data["type"] = "projectile"
+    projectile_data["source"] = enemy_object
+    projectile_data["x"] = enemy_object["x"] + direction_x * 30
+    projectile_data["y"] = enemy_object["y"] + direction_y * 30    
+    projectile_data["angle"] = enemy_object["angle"]
+    projectile_data["model"] = enemy_object["projectile_model"]
 
     level_data["messages"].append({
         "type":"add_entity",
-        "object":projectile_object
+        "object":projectile_data
     })
 
 
@@ -56,19 +55,19 @@ def update(enemy_object, level_data):
     player_object = level_data["entities"][0]
     distance = utils.distance(enemy_object, player_object)
     if enemy_object["state"] == "idle":
-        if distance < activation_distance:
+        if distance < enemy_object["activation_distance"]:
             enemy_object["state"] = "active"
-            enemy_object["shoot_countdown"] = delay_between_shoots
+            enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
             
     if enemy_object["state"] == "active":
         enemy_object["angle"] = utils.angle_to_target(enemy_object, player_object)
         
         enemy_object["shoot_countdown"]-=1
         if enemy_object["shoot_countdown"] < 0:
-           enemy_object["shoot_countdown"] = delay_between_shoots
+           enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
            shoot_projectile(enemy_object, level_data) 
 
-        if distance >= activation_distance:
+        if distance >= enemy_object["activation_distance"]:
             enemy_object["state"] = "idle"
     
     if enemy_object["state"] == "hurt":
@@ -77,31 +76,25 @@ def update(enemy_object, level_data):
             enemy_object["state"] = "idle"
     
     if enemy_object["state"] == 'exploding':
-        enemy_object["explosion_timer"] += 1
+        enemy_object["explosion_timer"] -= 1
         
-        if enemy_object["explosion_timer"] > enemy_object["explosion_animation_delay"] * renderer.get_animation_length("explosion"):
+        if enemy_object["explosion_timer"] <= 0:
             remove_enemy(enemy_object, level_data)
 
     return
 
 
-def image_enemy(enemy_object):        
-    if enemy_object["state"] in ["active", "idle"]:
-        return ("turret", -1)
-    elif enemy_object["state"] == 'exploding':
-        i = int(enemy_object["explosion_timer"] / enemy_object["explosion_animation_delay"] ) % renderer.get_animation_length("explosion")
-        return ("explosion", i)
-    elif enemy_object["state"] == 'hurt':
+def compute_image(enemy_object):        
+    state = str(enemy_object["state"])
+    if "model" in enemy_object and "state_sprites" in enemy_object["model"] and state in enemy_object["model"]["state_sprites"]:
+        enemy_object["current_sprite"] = enemy_object["model"]["state_sprites"][state]
+
+    if enemy_object["state"] == 'hurt':
         i = int(enemy_object["hurt_timer"] / 3)
         if i%2 == 0:
-            return ("turret", -1)
-        else:
-            return ("null", -1)
+            enemy_object["current_sprite"] = None
 
 def render(enemy_object, level_data):
-    camera_x = level_data["camera"]["x"]
-    camera_y = level_data["camera"]["y"]    
-    (image_key, image_index) = image_enemy(enemy_object)
-    x_draw = enemy_object["x"] - camera_x
-    y_draw = enemy_object["y"] - camera_y
-    renderer.draw_image(image_key, x_draw, y_draw, image_index=image_index, centered=True, angle=enemy_object["angle"])
+    compute_image(enemy_object)
+    if enemy_object["current_sprite"] != None:
+        renderer.render_sprite(enemy_object, level_data["camera"])

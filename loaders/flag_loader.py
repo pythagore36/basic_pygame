@@ -1,6 +1,3 @@
-import loaders.model_loader as model_loader
-import entities.flag_functions as flag_functions
-
 def load_flag(flag_data):
     flag = {
         "type":"flag",

@@ -3,6 +3,7 @@ import entities.entity_functions as entity_functions
 import entities.background_functions as background_functions
 import entities.tilemap_functions as tilemap_functions
 import entities.entity_messages as entity_messages
+import loaders.entity_loader as entity_loader
 import head_up_display
 
 
@@ -35,7 +36,10 @@ def update_camera(level_data, game_data):
 
 def apply_message(message, level_data, game_data):
     if message["type"] == "add_entity":
-        level_data["entities"].append(message["object"])
+        entity_data = message["object"]
+        entity = entity_loader.load_entity(entity_data)
+        if entity != None:
+            level_data["entities"].append(entity)
     elif message["type"] == "remove_entity":
         level_data["entities"].remove(message["object"])
     elif message["type"] == "entity":        
