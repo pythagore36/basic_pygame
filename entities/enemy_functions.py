@@ -8,7 +8,7 @@ def init(enemy_object):
     enemy_object["delay_between_shoots"] = model["delay_between_shoots"]
     enemy_object["projectile_model"] = model["projectile_model"]
     enemy_object["health"] = model["health"]
-    enemy_object["hitbox"] = model["hitbox"]
+    enemy_object["hitboxes"] = model["hitboxes"]
     enemy_object["explosion_counter"] = model["explosion_counter"]
 
 
@@ -20,7 +20,7 @@ def apply_message(message):
     if entity["health"] <= 0:
         entity["state"] = "exploding"
         entity["explosion_timer"] = entity["explosion_counter"]
-        del entity["hitbox"]
+        del entity["hitboxes"]
     else:
         entity["state"] = "hurt"
         entity["hurt_timer"] = 60

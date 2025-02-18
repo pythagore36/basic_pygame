@@ -1,5 +1,5 @@
 import math
-import collision_functions
+import collision_manager
 import renderer
 
 def init(projectile_object):
@@ -11,7 +11,7 @@ def init(projectile_object):
     projectile_speed = model["speed"]
     projectile_object["vx"] = direction_x * projectile_speed
     projectile_object["vy"] = direction_y * projectile_speed
-    projectile_object["hitbox"] = model["hitbox"]    
+    projectile_object["hitboxes"] = model["hitboxes"]    
     explosion_counter = model["explosion_counter"]
 
 
@@ -42,17 +42,14 @@ def update(projectile_object, level_data):
         
         is_collision = False
 
-        collisions = collision_functions.collisions(projectile_object, level_data)
+        collisions = collision_manager.search_collisions(projectile_object, projectile_object["hitboxes"][0], level_data)
         for collision in collisions:
-            if collision["type"] in ["mine", "flag", "door"]:
+            if collision["collision_type"] == "tile":
                 is_collision = True
-            if collision["type"] in ["player", "enemy"] and collision != projectile_object["source"] :
+            if collision["collision_type"] == "entity" and collision["hitbox"]["role"] == "solid" and collision["entity"] != projectile_object["source"]:
                 is_collision = True
-                send_damage(collision, level_data)
-
-
-        if collision_functions.is_collision_with_tilemap(projectile_object["x"], projectile_object["y"], projectile_object["hitbox"], tilemap_object):
-            is_collision = True
+                if collision["entity"]["type"] in ["player", "enemy"]:         
+                    send_damage(collision["entity"], level_data)
         
         if is_collision:
             projectile_object["state"] = 'exploding'

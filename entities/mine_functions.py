@@ -1,4 +1,4 @@
-import collision_functions
+import collision_manager
 import renderer
 import patrolling
 
@@ -8,7 +8,7 @@ def init(mine_object):
     mine_object["vy"] = 0
     if "model" in mine_object:
         model = mine_object["model"]
-        mine_object["hitbox"] = model["hitbox"]
+        mine_object["hitboxes"] = model["hitboxes"]
         state_sprites = model["state_sprites"]
         explosion_counter = model["explosion_counter"]
 
@@ -31,10 +31,10 @@ def damage_player(level_data, health_points):
 
 def update(mine_object, level_data):    
     if mine_object["state"] in ["standing", "patrolling"]:             
-        collisions = collision_functions.collisions(mine_object, level_data)
+        collisions = collision_manager.search_collisions(mine_object, mine_object["hitboxes"][0], level_data)
         
         for collision in collisions:
-            if collision["type"] == "player":
+            if collision["collision_type"] == "entity" and collision["entity"]["type"] == "player":
                 mine_object["state"] = "exploding"
                 mine_object["explosion_timer"] = explosion_counter
                 damage_player(level_data,1)

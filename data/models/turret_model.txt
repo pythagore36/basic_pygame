@@ -20,12 +20,14 @@
 	}
 	},
 	"explosion_counter" : 39,
-	"hitbox":{
+	"hitboxes":[{
+			"type":"AABB",
+			"role":"solid",
             "x":-45,
             "y":-20,
             "width":90,
             "height":40
-        },
+        }],
 	"model_sprites": {
 		"turret" : {
 			"key":"turret",

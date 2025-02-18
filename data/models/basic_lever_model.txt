@@ -11,12 +11,14 @@
 		"image": "basic_lever_1"
 	}
 	},
-	"hitbox": {
+	"hitboxes": [{
+		"type":"AABB",
+		"role":"interaction",
 		"x":-16,
 		"y":-6,
 		"width":32,
 		"height":32
-	},    
+	}],    
 	"model_sprites": {
 		"basic_lever_0" : {
 			"key":"basic_lever_0",

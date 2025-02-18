@@ -1,5 +1,5 @@
 import pygame
-import collision_functions
+import collision_manager
 import renderer
 import math
 
@@ -15,7 +15,7 @@ def init(player_object):
     player_object["explosion_counter"] = model["explosion_counter"]
     player_object["speed"] = model["speed"]
     player_object["rotation_speed"] = model["rotation_speed"]
-    player_object["hitbox"] = model["hitbox"]
+    player_object["hitboxes"] = model["hitboxes"]
 
 def apply_message(message):
     message_object = message["object"]
@@ -52,7 +52,7 @@ def damage_player(player_object, health_points):
     if player_object["health"] <= 0:
         player_object["state"] = "exploding"
         player_object["explosion_timer"] = player_object["explosion_counter"] 
-        del player_object["hitbox"]
+        del player_object["hitboxes"]
     else:
         player_object["state"] = "hurt"
         player_object["hurt_timer"] = 60
@@ -117,13 +117,14 @@ def update(player_object, level_data):
 
 
 def solid_collision(player_object, level_data):
-    tilemap_object = level_data["tilemap_object"]
-    if collision_functions.is_collision_with_tilemap(player_object["x"], player_object["y"], player_object["hitbox"], tilemap_object):
-        return True
-    collisions = collision_functions.collisions(player_object, level_data)
+    collisions = collision_manager.search_collisions(player_object, player_object["hitboxes"][0], level_data)
+
     for collision in collisions:
-        if collision["type"] in ["door", "enemy"]:
-            return True    
+        if collision["collision_type"] == "tile":
+            return True
+        if collision["collision_type"] == "entity" and collision["hitbox"]["role"] == "solid":
+            return True
+
     return False
 
 # Cette fonction déplace le joueur à chaque frame. Deux mouvements sont effectués : un mouvement selon x et l'autre selon y.

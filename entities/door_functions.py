@@ -1,4 +1,4 @@
-import collision_functions
+import collision_manager
 import renderer
 
 
@@ -7,7 +7,7 @@ def init(door_object):
     if "model" in door_object:
         hitbox_closed = door_object["model"]["hitbox_closed"]
         hitbox_open = door_object["model"]["hitbox_open"]
-        door_object["hitbox"] = hitbox_closed
+        door_object["hitboxes"] = [hitbox_closed]
         opening_counter = door_object["model"]["opening_number_frames"]
         closing_counter = door_object["model"]["closing_number_frames"]
 
@@ -21,13 +21,13 @@ def open(door_object):
 
 def close(door_object, level_data):
     if door_object["state"] == "open":
-        door_object["hitbox"] = hitbox_closed
+        door_object["hitboxes"] = [hitbox_closed]
 
         # door cannot close if something is under it
-        collisions = collision_functions.collisions(door_object, level_data)
+        collisions = collision_manager.search_collisions(door_object, hitbox_closed, level_data)
         for collision in collisions:
-            if collision["type"] in ["player"]:
-                door_object["hitbox"] = hitbox_open
+            if collision["collision_type"] == "entity" and collision["hitbox"]["role"] == "solid":
+                door_object["hitboxes"] = [hitbox_open]
                 return
 
         door_object["state"] = "closing"
@@ -65,17 +65,17 @@ def check_condition(condition, level_data):
 
 def update(door_object, level_data):    
     
-    if "hitbox" not in door_object:
+    if "hitboxes" not in door_object:
         if door_object["state"] == "open":
-            door_object["hitbox"] = hitbox_open
+            door_object["hitboxes"] = [hitbox_open]
         else :
-            door_object["hitbox"] = hitbox_closed
+            door_object["hitboxes"] = [hitbox_closed]
 
     if door_object["state"] == "opening":
         door_object["counter"] -= 1
         if door_object["counter"] <= 0:                    
             door_object["state"] = "open"
-            door_object["hitbox"] = hitbox_open
+            door_object["hitboxes"] = [hitbox_open]
     
     if door_object["state"] == "closing":
         door_object["counter"] -= 1

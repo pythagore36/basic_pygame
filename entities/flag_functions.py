@@ -1,17 +1,19 @@
-import collision_functions
+import collision_manager
 import renderer
 
 def init(flag_object):
-    flag_object["hitbox"] = flag_object["model"]["hitbox"]
+    flag_object["hitboxes"] = flag_object["model"]["hitboxes"]
     flag_object["state"] = "not reached"
     flag_object["current_sprite"] = flag_object["model"]["not_reached_sprite"]
 
-def update_not_reached(flag_object, level_data):
-    player_object = level_data["entities"][0]   
-    if "hitbox" in player_object and collision_functions.is_collision(player_object["x"], player_object["y"], player_object["hitbox"], flag_object["x"], flag_object["y"], flag_object["hitbox"]):
-        flag_object["state"] = "reached"
-        flag_object["current_sprite"] = flag_object["model"]["reached_sprite"]
-        flag_object["reached_countdown_to_exit"] = 60 
+def update_not_reached(flag_object, level_data):    
+    collisions =  collision_manager.search_collisions(flag_object, flag_object["hitboxes"][0], level_data)
+    for collision in collisions:
+        if collision["collision_type"] == "entity" and collision["entity"]["type"] == "player":
+            flag_object["state"] = "reached"
+            flag_object["current_sprite"] = flag_object["model"]["reached_sprite"]
+            flag_object["reached_countdown_to_exit"] = 60     
+        
 
 def update_reached(flag_object, level_data):
     flag_object["reached_countdown_to_exit"] -= 1

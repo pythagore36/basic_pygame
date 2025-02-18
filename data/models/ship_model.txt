@@ -17,12 +17,14 @@
 	}
 	},
 	"explosion_counter" : 39,
-	"hitbox":{
+	"hitboxes":[{
+			"type":"AABB",
+			"role":"solid",
             "x":-15,
             "y":-15,
             "width":30,
             "height":30
-        },
+        }],
 	"model_sprites": {
 		"ship" : {
 			"key":"ship",

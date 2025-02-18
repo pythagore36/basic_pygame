@@ -24,12 +24,16 @@
 	}
 	},
 	"hitbox_open" : {
+		"type":"AABB",
+		"role":"solid",
    		"x":-32,
     	"y":-32,
     	"width":64,
     	"height":1
 	},
 	"hitbox_closed": {
+		"type":"AABB",
+		"role":"solid",
     	"x":-32,
     	"y":-32,
     	"width":64,

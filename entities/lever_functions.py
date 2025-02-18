@@ -1,4 +1,4 @@
-import collision_functions
+import collision_manager
 import pygame
 import renderer
 
@@ -9,15 +9,15 @@ def update(lever_object, level_data):
     global ctrl_key_pressed
 
     if "model" in lever_object:
-        lever_object["hitbox"] = lever_object["model"]["hitbox"]
+        lever_object["hitboxes"] = lever_object["model"]["hitboxes"]
 
     keys = pygame.key.get_pressed()
         
     if keys[pygame.K_LCTRL] and not ctrl_key_pressed:        
-        collisions = collision_functions.collisions(lever_object, level_data)
+        collisions = collision_manager.search_collisions(lever_object,lever_object["hitboxes"][0], level_data)
         player_in_zone = False
         for collision in collisions:
-            if collision["type"] == "player":
+            if collision["collision_type"] == "entity" and collision["entity"]["type"] == "player":
                 player_in_zone = True
         if player_in_zone:
             ctrl_key_pressed = True

@@ -11,12 +11,14 @@
 		"image": "other_lever_1"
 	}
 	},
-	"hitbox": {
+	"hitboxes": [{
+		"type":"AABB",
+		"role":"interaction",
 		"x":-32,
 		"y":-12,
 		"width":64,
 		"height":64
-	},    
+	}],    
 	"model_sprites": {
 		"other_lever_0" : {
 			"key":"other_lever_0",

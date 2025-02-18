@@ -14,10 +14,14 @@
 	}
 	},
 	"explosion_counter" : 39,
-	"hitbox": {"x":-15,
+	"hitboxes": [
+				{
+				"type":"AABB",
+				"role":"damage",
+				"x":-15,
        			"y":-15,
        		 	"width":30,
-        		"height":30},
+        		"height":30}],
 	"model_sprites": {
 		"fireball" : {
 			"key":"fireball",
