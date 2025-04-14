@@ -12,12 +12,22 @@
 	}
 	},
 	"hitboxes": [{
-		"type":"AABB",
-		"role":"interaction",
-		"x":-32,
-		"y":-12,
-		"width":64,
-		"height":64
+		"type":"poly",
+		"role":"solid",
+		"points":[{
+			"x":-32,
+			"y": 16
+		},{
+			"x":16,
+			"y": 16
+		},{
+			"x":16,
+			"y": 32
+		},{
+			"x":-32,
+			"y": 32
+		}
+		]
 	}],    
 	"model_sprites": {
 		"other_lever_0" : {

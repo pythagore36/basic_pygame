@@ -24,7 +24,24 @@
             "y":-15,
             "width":30,
             "height":30
-        }],
+        },{
+			"type":"poly",
+			"role":"interaction",
+			"points":[{
+				"x": 15 ,
+				"y": -5
+			},{
+				"x": 25,
+				"y": -5
+			},{
+				"x": 25,
+				"y": 5
+			},{
+				"x": 15,
+				"y": 5
+			}
+			]
+		}],
 	"model_sprites": {
 		"ship" : {
 			"key":"ship",

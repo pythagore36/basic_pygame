@@ -16,9 +16,10 @@ def update(lever_object, level_data):
     if keys[pygame.K_LCTRL] and not ctrl_key_pressed:        
         collisions = collision_manager.search_collisions(lever_object,lever_object["hitboxes"][0], level_data)
         player_in_zone = False
-        for collision in collisions:
-            if collision["collision_type"] == "entity" and collision["entity"]["type"] == "player":
+        for collision in collisions:                            
+            if collision["collision_type"] == "entity" and collision["entity"]["type"] == "player" and collision["hitbox"]["role"] == "interaction":
                 player_in_zone = True
+                
         if player_in_zone:
             ctrl_key_pressed = True
             lever_object["state"] ^= 1

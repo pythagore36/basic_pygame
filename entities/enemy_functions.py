@@ -1,6 +1,7 @@
 import renderer
 import entities.utils as utils
 import math
+import line_of_sight
 
 def init(enemy_object):    
     model = enemy_object["model"]
@@ -55,7 +56,7 @@ def update(enemy_object, level_data):
     player_object = level_data["entities"][0]
     distance = utils.distance(enemy_object, player_object)
     if enemy_object["state"] == "idle":
-        if distance < enemy_object["activation_distance"]:
+        if distance < enemy_object["activation_distance"] and line_of_sight.visible(enemy_object, player_object, level_data):
             enemy_object["state"] = "active"
             enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
             
@@ -67,7 +68,7 @@ def update(enemy_object, level_data):
            enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
            shoot_projectile(enemy_object, level_data) 
 
-        if distance >= enemy_object["activation_distance"]:
+        if distance >= enemy_object["activation_distance"] or (not line_of_sight.visible(enemy_object, player_object, level_data)):
             enemy_object["state"] = "idle"
     
     if enemy_object["state"] == "hurt":

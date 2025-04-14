@@ -1,3 +1,6 @@
+import math
+import sat_collision
+
 def init_frame(level_data):
     return
 
@@ -56,7 +59,13 @@ def search_collisions(entity, hitbox, level_data):
 
 def transform(entity, hitbox):
     if "type" in hitbox and hitbox["type"] == "AABB":
-        return {
+        return transform_AABB(entity, hitbox)
+    if "type" in hitbox and hitbox["type"] == "poly":        
+        return transform_poly(entity, hitbox)    
+    return None
+
+def transform_AABB(entity, hitbox):
+    return {
             "type":"AABB",
             "x":entity["x"] + hitbox["x"],
             "y":entity["y"] + hitbox["y"],
@@ -69,11 +78,85 @@ def transform(entity, hitbox):
                 "y2": entity["y"] + hitbox["y"] + hitbox["height"]
             }
         }
-    return None
+
+def transform_poly(entity, hitbox):
+    points = []
+        
+    for point in hitbox["points"]:
+        points.append(point)
+
+    if "angle" in entity:
+        angle = entity["angle"]
+        for i in range(len(points)):
+            point = points[i]
+            points[i] = rotatePoint(point, angle)
+
+    for i in range(len(points)):
+        point = points[i]
+        points[i] = translatePoint(point, entity["x"], entity["y"])
+
+    bounding_box = compute_bounding_box(points)
+
+    result = {
+            "type" : "poly",
+            "points" : points,
+            "bounding_box": bounding_box
+        }
+    
+    return result
+
+
+def compute_bounding_box(points):
+    minX = None
+    maxX = None
+    minY = None
+    maxY = None
+
+    for point in points:
+        x = point["x"]
+        y = point["y"]
+        if minX == None or x < minX:
+            minX = x
+        if maxX == None or x > maxX:
+            maxX = x
+        if minY == None or y < minY:
+            minY = y
+        if maxY == None or y > maxY:
+            maxY = y
+
+    bounding_box = {
+            "x1":minX,
+            "y1":minY,
+            "x2":maxX,
+            "y2":maxY
+        }
+    
+    return bounding_box
+
+def rotatePoint(point, angle):
+    rad = math.radians(angle)
+    cos = math.cos(rad)
+    sin = math.sin(rad)
+    return {
+        "x": point["x"] * cos + point["y"] * sin,
+        "y": point["y"] * cos - point["x"] * sin
+        }
+
+def translatePoint(point, x, y):
+    return {
+        "x": point["x"] + x,
+        "y": point["y"] + y
+    }
 
 def evaluate_collision_transformed(h1, h2):
     if h1["type"] == "AABB" and h2["type"] == "AABB":
         return evaluate_collision_AABB(h1,h2)
+    if h1["type"] == "poly" and h2["type"] == "poly":
+        return evaluate_collision_convex_Polygons(h1,h2)
+    if h1["type"] == "AABB" and h2["type"] == "poly":
+        return evaluate_collision_convex_polygon_to_AABB(h2,h1)
+    if h1["type"] == "poly" and h2["type"] == "AABB":
+        return evaluate_collision_convex_polygon_to_AABB(h1,h2)
     return False
 
 def evaluate_collision_AABB(h1,h2):
@@ -82,3 +165,37 @@ def evaluate_collision_AABB(h1,h2):
     x2 = h2["x"]
     y2 = h2["y"]
     return not (x2 > x1 + h1["width"] or x1 > x2 + h2["width"] or y2 > y1 + h1["height"] or y1 > y2 + h2["height"])
+
+def evaluate_collision_convex_polygon_to_AABB(h_c_poly, h_aabb):
+    
+    h_aabb_to_poly = {
+        "type":"poly",
+        "points": [{
+            "x":h_aabb["x"],
+            "y":h_aabb["y"]
+        }, {
+            "x":h_aabb["x"] + h_aabb["width"],
+            "y":h_aabb["y"]
+        }, {
+            "x":h_aabb["x"] + h_aabb["width"],
+            "y":h_aabb["y"] + h_aabb["height"]
+        }, {
+            "x":h_aabb["x"],
+            "y":h_aabb["y"]  + h_aabb["height"]
+        }
+
+        ]
+    }    
+    
+    return evaluate_collision_convex_Polygons(h_c_poly, h_aabb_to_poly)
+
+def evaluate_collision_convex_Polygons(h1,h2):
+
+    points1 = []
+    for point in h1["points"]:
+        points1.append((point["x"], point["y"]))
+    points2 = []
+    for point in h2["points"]:
+        points2.append((point["x"], point["y"]))
+
+    return sat_collision.polygon_to_polygon(points1, points2)
