@@ -2,16 +2,25 @@
     "name": "Basic Pygame",
     "screen_width": 608,
     "screen_height": 608,
-    "entry_level":"level1",
+    "entry_level":"entry_level",
     "levels": [
         {   
-			"key":"level1",
+			"key":"entry_level",
             "name": "Level 1",
+            "path": "data/levels/entry_level.txt"            
+        },		
+		{   
+			"key":"level1",
+            "name": "Level 2",
             "path": "data/levels/level1.txt"            
         },{ 
 			"key": "level2",
-            "name": "Level 2",
+            "name": "Level 3",
             "path": "data/levels/level2.txt"
+        },{ 
+			"key": "test_level",
+            "name": "Test Level",
+            "path": "data/levels/test_level.txt"
         }
     ],
 	"models": [
@@ -45,6 +54,9 @@
 		},{
 			"key":"ship_model",
 			"path":"data/models/ship_model.txt"
+		},{
+			"key":"enemy_ship_model",
+			"path":"data/models/enemy_ship_model.txt"
 		}
 	],
 	"sprites": [

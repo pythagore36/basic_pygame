@@ -3,6 +3,9 @@ import collision_manager
 import renderer
 import math
 
+POSITIONS_SIZE = 40
+POSITIONS_DELAY = 15
+
 def init(player_object):
     model = player_object["model"]
 
@@ -16,6 +19,9 @@ def init(player_object):
     player_object["speed"] = model["speed"]
     player_object["rotation_speed"] = model["rotation_speed"]
     player_object["hitboxes"] = model["hitboxes"]
+    
+    player_object["positions"] = []
+    player_object["store_next_position_countdown"] = POSITIONS_DELAY
 
 def apply_message(message):
     message_object = message["object"]
@@ -60,6 +66,13 @@ def damage_player(player_object, health_points):
 
 def update(player_object, level_data):    
     
+    player_object["store_next_position_countdown"] -= 1
+    if player_object["store_next_position_countdown"] < 0:
+        player_object["store_next_position_countdown"] = POSITIONS_DELAY
+        player_object["positions"].insert(0, {"x":player_object["x"], "y":player_object["y"]})
+        if len(player_object["positions"]) > POSITIONS_SIZE:
+            player_object["positions"].pop()
+
     if player_object["state"] == "exploding":
         player_object["explosion_timer"] -= 1
         if player_object["explosion_timer"] <= 0:
@@ -165,3 +178,4 @@ def render(player_object, level_data):
     compute_image(player_object)
     if player_object["current_sprite"] != None:
         renderer.render_sprite(player_object, level_data["camera"])
+

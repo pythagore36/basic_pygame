@@ -2,6 +2,7 @@ import renderer
 import entities.utils as utils
 import math
 import line_of_sight
+import collision_manager
 
 def init(enemy_object):    
     model = enemy_object["model"]
@@ -11,7 +12,17 @@ def init(enemy_object):
     enemy_object["health"] = model["health"]
     enemy_object["hitboxes"] = model["hitboxes"]
     enemy_object["explosion_counter"] = model["explosion_counter"]
-
+    if "speed" in model:
+        enemy_object["speed"] = model["speed"]
+    else:
+        enemy_object["speed"] = 0
+    if "target_distance" in model:
+        enemy_object["target_distance"] = model["target_distance"]    
+    enemy_object["target"] = None
+    if "path_width" in model:
+        enemy_object["path_width"] = model["path_width"]
+    else:
+        enemy_object["path_width"] = 1
 
 def apply_message(message):
     message_object = message["object"]
@@ -53,28 +64,53 @@ def shoot_projectile(enemy_object, level_data):
 
 
 def update(enemy_object, level_data):  
+
     player_object = level_data["entities"][0]
     distance = utils.distance(enemy_object, player_object)
+
     if enemy_object["state"] == "idle":
         if distance < enemy_object["activation_distance"] and line_of_sight.visible(enemy_object, player_object, level_data):
             enemy_object["state"] = "active"
             enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
+            enemy_object["target"] = player_object
+            enemy_object["angle"] = utils.angle_to_target(enemy_object, enemy_object["target"]) 
+            enemy_object["choose_target_countdown"] = 60
             
     if enemy_object["state"] == "active":
-        enemy_object["angle"] = utils.angle_to_target(enemy_object, player_object)
+        # choose target
+        enemy_object["choose_target_countdown"] -= 1
+        if enemy_object["choose_target_countdown"] < 0 or enemy_object["target"] == None:
+            enemy_object["choose_target_countdown"] = 60
+            enemy_object["target"] = player_object
+            if not line_of_sight.free_path(enemy_object, player_object, enemy_object["path_width"], level_data) and "positions" in player_object:
+                for position in player_object["positions"]:
+                    if line_of_sight.free_path(enemy_object, position, enemy_object["path_width"], level_data) and utils.distance(enemy_object, position) > 50:
+                        enemy_object["target"] = position
+                        break
+            # orient toward target
+            enemy_object["angle"] = utils.angle_to_target(enemy_object, enemy_object["target"])            
         
-        enemy_object["shoot_countdown"]-=1
-        if enemy_object["shoot_countdown"] < 0:
-           enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
-           shoot_projectile(enemy_object, level_data) 
+        
+        # shoot only if path to player is free
+        if line_of_sight.free_path(enemy_object, player_object, enemy_object["path_width"], level_data):
+            enemy_object["shoot_countdown"]-=1
+            if enemy_object["shoot_countdown"] < 0:
+                enemy_object["shoot_countdown"] = enemy_object["delay_between_shoots"]
+                enemy_object["angle"] = utils.angle_to_target(enemy_object, enemy_object["target"])
+                shoot_projectile(enemy_object, level_data)         
 
-        if distance >= enemy_object["activation_distance"] or (not line_of_sight.visible(enemy_object, player_object, level_data)):
+        # if too far from player, deactivate
+        if distance >= enemy_object["activation_distance"]:
             enemy_object["state"] = "idle"
+            enemy_object["target"] = None
+        
+        if enemy_object["target"]  != None and "target_distance" in enemy_object and distance > enemy_object["target_distance"] and enemy_object["speed"] > 0:
+            move_towards_target(enemy_object, enemy_object["target"] , level_data)
     
     if enemy_object["state"] == "hurt":
         enemy_object["hurt_timer"]-=1
         if enemy_object["hurt_timer"] <= 0:
-            enemy_object["state"] = "idle"
+            enemy_object["state"] = "active"
     
     if enemy_object["state"] == 'exploding':
         enemy_object["explosion_timer"] -= 1
@@ -84,6 +120,33 @@ def update(enemy_object, level_data):
 
     return
 
+def move_towards_target(entity, target, level_data):
+    
+    speed = entity["speed"]
+
+    vx = speed * math.cos(math.radians(entity["angle"]))
+    vy = -speed * math.sin(math.radians(entity["angle"]))
+
+    entity["x"] += vx
+    if solid_collision(entity, level_data):
+        entity["x"]-=vx
+    
+    entity["y"] += vy
+    if solid_collision(entity, level_data):
+        entity["y"]-=vy
+    
+    return
+
+def solid_collision(entity, level_data):
+    collisions = collision_manager.search_collisions(entity, entity["hitboxes"][0], level_data)
+
+    for collision in collisions:
+        if collision["collision_type"] == "tile":
+            return True
+        if collision["collision_type"] == "entity" and collision["hitbox"]["role"] == "solid":
+            return True
+
+    return False
 
 def compute_image(enemy_object):        
     state = str(enemy_object["state"])
